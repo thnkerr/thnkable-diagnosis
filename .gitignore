@@ -1,0 +1,24 @@
+# Claude Code 로컬 개발 설정 (다른 사람에게 의미 없음)
+.claude/
+
+# macOS / Windows
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Node (사용 안 하지만 안전상)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# 에디터
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 환경 파일 (혹시 모르니)
+.env
+.env.local
+.env.*.local

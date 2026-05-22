@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>씽커블 | 우리 아이의 학습 기질 결과지</title>
+<meta name="description" content="씽커블 학습 기질 진단 결과 — 우리 아이의 결을 이해하고 오늘부터 실천할 수 있는 한 가지를 받아가세요." />
+
+<!-- 공유용 OG -->
+<meta property="og:title" content="씽커블 학습 기질 진단 결과" />
+<meta property="og:description" content="우리 아이의 결을 이해하는 부모 코칭 가이드" />
+<meta property="og:type" content="article" />
+
+<!-- ════════════════════════════════════════════════════════
+     GA4 자리 — 운영 시 측정 ID(G-XXXXXXXXXX)만 교체
+     ════════════════════════════════════════════════════════ -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX', { send_page_view: false });
+
+  function track(event, params) {
+    try { gtag('event', event, params || {}); } catch(e) {}
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: '#1a1a1a',
+        muted: '#6B6B6B',
+        cream: '#F5F1E8',
+        creamSoft: '#FAF7F0',
+        line: '#E5E0D4',
+        darkgreen: '#143D28',
+        green: '#178A6E',
+        greenSoft: '#EAF5F0',
+        orange: '#EF8B4E',
+        orangeSoft: '#FDEBDD'
+      },
+      fontFamily: {
+        pretendard: ['"Pretendard Variable"', 'Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif']
+      }
+    }
+  }
+};
+</script>
+
+<style>
+  html, body {
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    color: #1a1a1a; background: #F5F1E8;
+    -webkit-font-smoothing: antialiased; line-height: 1.6;
+  }
+
+  .section-label {
+    font-size: 11px; letter-spacing: 0.2em; font-weight: 700;
+    color: #178A6E; text-transform: uppercase;
+  }
+  .section-label.on-dark { color: #EF8B4E; }
+
+  /* 결과 카드 — 다크그린 + 오렌지 글로우 */
+  .result-card {
+    background: #143D28; color: #fff; border-radius: 28px;
+    padding: 40px 28px 36px; position: relative; overflow: hidden;
+  }
+  .result-card::before {
+    content: ''; position: absolute; top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(239,139,78,0.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .result-card::after {
+    content: ''; position: absolute; bottom: -80px; left: -50px;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(23,138,110,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* 인용 박스 — 블록 3 */
+  .quote-mark {
+    color: #EF8B4E; font-size: 30px; font-weight: 900; line-height: 0.6;
+    font-family: Georgia, 'Times New Roman', serif;
+    display: inline-block; vertical-align: -6px;
+  }
+
+  /* CTA 버튼 */
+  .btn-primary {
+    background: #143D28; color: #fff; border-radius: 999px;
+    padding: 16px 28px; font-weight: 700; font-size: 16px;
+    transition: all 0.18s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-primary:hover { background: #0E2C1D; transform: translateY(-1px); box-shadow: 0 10px 24px rgba(20,61,40,0.25); }
+
+  .btn-orange {
+    background: #EF8B4E; color: #fff; border-radius: 999px;
+    padding: 16px 28px; font-weight: 700; font-size: 16px;
+    transition: all 0.18s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-orange:hover { background: #E37835; transform: translateY(-1px); box-shadow: 0 10px 24px rgba(239,139,78,0.3); }
+
+  /* 모달 */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(20,61,40,0.65);
+    z-index: 50; display: none;
+    align-items: flex-end; justify-content: center; padding: 16px;
+    backdrop-filter: blur(2px);
+  }
+  .modal-backdrop.active { display: flex; animation: fadeIn 0.25s ease-out both; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-content {
+    background: #fff; border-radius: 28px;
+    width: 100%; max-width: 520px;
+    padding: 26px 22px 24px;
+    max-height: 90vh; overflow-y: auto;
+    animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @media (min-width: 640px) { .modal-backdrop { align-items: center; } }
+
+  /* SVG 기질 지도 */
+  .map-svg { width: 100%; height: auto; max-width: 360px; display: block; margin: 0 auto; }
+  .map-dot {
+    transform-origin: center;
+    animation: dotAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+  }
+  @keyframes dotAppear {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .map-dot-ring {
+    animation: ringPulse 2s ease-in-out 1s infinite;
+    transform-origin: center;
+  }
+  @keyframes ringPulse {
+    0%, 100% { r: 16; opacity: 0.35; }
+    50% { r: 22; opacity: 0; }
+  }
+
+  /* 스크롤 reveal */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* 토스트 */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #143D28; color: #fff;
+    padding: 14px 22px; border-radius: 999px;
+    font-size: 14px; font-weight: 600;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+    z-index: 100; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    max-width: calc(100vw - 48px); text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* 에러 화면 */
+  .error-box {
+    background: #fff; border: 1.5px solid #E5E0D4; border-radius: 24px;
+    padding: 32px 24px; text-align: center; margin-top: 40px;
+  }
+</style>
+</head>
+
+<body class="font-pretendard">
+
+<!-- 상단 로고바 -->
+<header class="px-6 pt-5 pb-2 max-w-[600px] mx-auto">
+  <div class="flex items-center justify-between">
+    <a href="index.html" class="flex items-center" aria-label="씽커블 홈">
+      <img src="assets/logo.png" alt="Thnkable" class="h-6 w-auto" />
+    </a>
+    <span class="text-[11px] tracking-[0.2em] font-bold text-darkgreen/60 uppercase">Result</span>
+  </div>
+</header>
+
+<main class="max-w-[600px] mx-auto px-6 pb-16">
+
+<!-- 에러 화면 (조합 키 없거나 잘못된 경우) -->
+<section id="errorView" class="hidden">
+  <div class="error-box">
+    <div class="text-4xl mb-3">😶</div>
+    <h2 class="text-[20px] font-extrabold text-darkgreen">결과를 찾을 수 없습니다</h2>
+    <p class="mt-2 text-[14px] text-muted leading-relaxed">진단을 먼저 진행하시면 결과지로 안내해드립니다.</p>
+    <a href="index.html" class="btn-primary mt-6 inline-block">진단 시작하기 →</a>
+  </div>
+</section>
+
+<!-- 결과지 본문 -->
+<section id="resultView" class="pt-6 hidden">
+
+  <!-- 결과지 도입 라벨 -->
+  <div class="section-label reveal">RESULT</div>
+  <h1 class="text-[26px] font-extrabold mt-2 leading-[1.3] text-darkgreen reveal">
+    우리 아이의<br/>
+    <span class="text-green">학습 기질이 보입니다.</span>
+  </h1>
+
+  <!-- ▣ 블록 1. 상단 카드 (공유용 이미지 영역) -->
+  <div class="mt-7 reveal">
+    <div id="result-card" class="result-card">
+      <img src="assets/logo-white.png" alt="Thnkable" class="absolute top-6 right-6 h-5 w-auto opacity-90" />
+
+      <div class="relative">
+        <div class="section-label on-dark">OUR CHILD</div>
+        <div class="mt-4 inline-flex items-center gap-1.5 bg-orange/15 text-orange px-3 py-1 rounded-full">
+          <span class="w-1.5 h-1.5 rounded-full bg-orange"></span>
+          <span class="text-[11px] font-bold tracking-wider uppercase" id="resTypeLabel">—</span>
+        </div>
+
+        <h2 class="text-[28px] font-extrabold mt-5 leading-[1.3]" id="resLine1">—</h2>
+        <p class="mt-2.5 text-[16px] leading-[1.7] text-white/90" id="resLine2">—</p>
+
+        <div class="mt-8 pt-5 border-t border-white/15 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <img src="assets/logo-white.png" alt="Thnkable" class="h-4 w-auto" />
+            <span class="text-[11px] text-white/50">| 학습 기질 진단</span>
+          </div>
+          <span class="text-[10px] text-white/40 tracking-wider" id="resAgeBadge">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-2 mt-3">
+      <button type="button" class="flex-1 text-[13px] font-bold py-3 bg-white border border-line rounded-full text-ink hover:bg-cream active:scale-[0.98] transition" onclick="saveCardImage()">🖼  이미지 저장</button>
+      <button type="button" class="flex-1 text-[13px] font-bold py-3 bg-white border border-line rounded-full text-ink hover:bg-cream active:scale-[0.98] transition" onclick="shareCard()">🔗  공유</button>
+    </div>
+  </div>
+
+  <!-- ▣ 블록 2. 보통 이런 모습 -->
+  <div class="mt-12 reveal">
+    <div class="section-label">DAILY SCENES</div>
+    <h3 class="text-[20px] font-extrabold mt-1.5 text-darkgreen">보통 이런 모습입니다</h3>
+    <div class="mt-4 bg-white border border-line rounded-2xl p-5 space-y-3.5" id="resScenes"></div>
+  </div>
+
+  <!-- ▣ 블록 3. 그동안의 답답함 -->
+  <div class="mt-10 reveal">
+    <div class="section-label" style="color:#EF8B4E;">SIGNAL, NOT FAULT</div>
+    <h3 class="text-[20px] font-extrabold mt-1.5 text-darkgreen">그동안의 답답함</h3>
+    <div class="mt-4 bg-orangeSoft/60 border border-orange/30 rounded-2xl p-5 relative">
+      <span class="quote-mark absolute top-3 left-4">"</span>
+      <p class="text-[16px] leading-[1.75] text-ink font-medium pl-7 pr-3" id="resFrustration">—</p>
+      <span class="quote-mark absolute bottom-2 right-4">"</span>
+    </div>
+  </div>
+
+  <!-- ▣ 블록 4. 기질 지도 (2D 좌표) -->
+  <div class="mt-10 reveal">
+    <div class="section-label">MAP POSITION</div>
+    <h3 class="text-[20px] font-extrabold mt-1.5 text-darkgreen">우리 아이의 기질 지도</h3>
+
+    <div class="mt-4 bg-white border border-line rounded-2xl p-5">
+      <div id="mapContainer"></div>
+      <div class="mt-5 pt-4 border-t border-line space-y-3">
+        <div class="flex items-start gap-3">
+          <span class="text-[11px] font-bold text-green bg-greenSoft px-2.5 py-1 rounded-full flex-shrink-0 mt-0.5 tracking-wider">일상</span>
+          <p class="text-[15px] leading-[1.75] text-ink flex-1" id="resMapLine1">—</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="text-[11px] font-bold text-orange bg-orangeSoft px-2.5 py-1 rounded-full flex-shrink-0 mt-0.5 tracking-wider">영어</span>
+          <p class="text-[15px] leading-[1.75] text-ink flex-1" id="resMapLine2">—</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ▣ 블록 5. 자주 보이는 4가지 모습 -->
+  <div class="mt-10 reveal">
+    <div class="section-label">FOUR BEHAVIORS</div>
+    <h3 class="text-[20px] font-extrabold mt-1.5 text-darkgreen">자주 보이는 4가지 모습</h3>
+    <p class="text-[13px] text-muted mt-1">행동 → 진짜 의미 → 오늘 해볼 대응</p>
+
+    <div class="mt-5 space-y-4" id="resFourBehaviors"></div>
+  </div>
+
+  <!-- ▣ 블록 6. 안 통하는 말 / 통하는 말 -->
+  <div class="mt-10 reveal">
+    <div class="section-label" style="color:#EF8B4E;">WHAT TO SAY</div>
+    <h3 class="text-[20px] font-extrabold mt-1.5 text-darkgreen">안 통하는 말 / 통하는 말</h3>
+
+    <div class="mt-5 space-y-3.5" id="resWordPairs"></div>
+  </div>
+
+  <!-- ▣ 블록 7. 부모님의 자리 -->
+  <div class="mt-10 reveal">
+    <div class="section-label">YOUR ROLE</div>
+    <h3 class="text-[20px] font-extrabold mt-1.5 text-darkgreen">이 시기 부모님의 자리</h3>
+
+    <div class="mt-4 bg-darkgreen text-white rounded-2xl p-6 relative overflow-hidden">
+      <div class="absolute -top-10 -right-10 w-32 h-32 bg-orange/15 rounded-full blur-2xl"></div>
+      <div class="relative">
+        <p class="text-[14px] leading-[1.7] text-white/80" id="resAgeEssence">—</p>
+        <div class="mt-4 pt-4 border-t border-white/15">
+          <p class="text-[16px] leading-[1.8] text-white font-medium" id="resParentRole">—</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ▣ 블록 8. 이번 주 실천 -->
+  <div class="mt-10 reveal" id="block8">
+    <div class="section-label" style="color:#EF8B4E;">THIS WEEK</div>
+    <h3 class="text-[20px] font-extrabold mt-1.5 text-darkgreen">이번 주 실천 한 가지</h3>
+
+    <div class="mt-4 bg-orange/10 border-2 border-orange rounded-2xl p-6 text-center">
+      <div class="text-3xl mb-2">🌱</div>
+      <p class="text-[16px] leading-[1.75] text-darkgreen font-bold" id="resWeeklyPractice">—</p>
+    </div>
+  </div>
+
+  <!-- ▣ 마무리 인용구 -->
+  <div class="mt-12 reveal">
+    <div class="bg-cream border border-line rounded-2xl p-6 text-center">
+      <p class="text-[15px] leading-[1.85] text-darkgreen">
+        <span class="quote-mark">"</span>
+        기질은 단정하는 라벨이 아니라,<br/>
+        부모의 <span class="text-orange font-bold">첫 반응</span>을 고르는 지도입니다.
+        <span class="quote-mark">"</span>
+      </p>
+      <p class="mt-4 text-[12px] text-muted leading-relaxed">
+        아이는 시기와 환경에 따라 달라집니다.<br/>
+        한 학기에 한 번씩 다시 진단해보세요.
+      </p>
+    </div>
+  </div>
+
+  <!-- ▣ 블록 9. CTA 두 카드 -->
+  <div class="mt-10 reveal">
+    <div class="section-label">NEXT STEP</div>
+    <h3 class="text-[20px] font-extrabold mt-1.5 text-darkgreen">한 걸음 더</h3>
+
+    <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- PDF 카드 (부드러운 톤) — 시기별 PDF 직접 다운로드 -->
+      <div class="bg-white border-2 border-greenSoft rounded-2xl p-5 flex flex-col">
+        <div class="w-11 h-11 rounded-xl bg-greenSoft flex items-center justify-center text-xl mb-3">📄</div>
+        <div class="font-extrabold text-darkgreen text-[16px] leading-tight" id="resPdfHeadline">—</div>
+        <p class="text-[13px] text-muted mt-2 leading-[1.65] flex-1" id="resPdfSub">—</p>
+        <a id="resPdfDownload" href="#" download class="mt-4 btn-primary w-full" onclick="trackPdfClick()">학부모 가이드 다운받기</a>
+      </div>
+
+      <!-- 상담 카드 (단단한 톤) — 외부 구글 폼 새 탭 이동 -->
+      <div class="bg-darkgreen text-white rounded-2xl p-5 flex flex-col relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-28 h-28 bg-orange/15 rounded-full blur-2xl"></div>
+        <div class="relative flex flex-col flex-1">
+          <div class="w-11 h-11 rounded-xl bg-orange/20 flex items-center justify-center text-xl mb-3">💬</div>
+          <div class="font-extrabold text-white text-[16px] leading-tight" id="resConsultHeadline">—</div>
+          <p class="text-[13px] text-white/70 mt-2 leading-[1.65] flex-1" id="resConsultSub">—</p>
+          <a href="https://forms.gle/qgrBbRmctubvr6Bp7" target="_blank" rel="noopener noreferrer"
+             class="mt-4 btn-orange w-full" onclick="trackConsultClick()">상담 신청하기</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <div class="mt-14 text-center pb-4">
+    <div class="flex justify-center">
+      <img src="assets/logo.png" alt="Thnkable" class="h-5 w-auto" />
+    </div>
+    <p class="text-[11px] text-muted/80 mt-3 tracking-[0.18em] uppercase">먼저 영어 | 씽커블</p>
+    <a href="index.html" class="mt-5 inline-block text-[13px] font-semibold text-darkgreen underline underline-offset-4">다시 진단하기</a>
+  </div>
+</section>
+
+</main>
+
+<div id="toast" class="toast"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     스크립트
+     ════════════════════════════════════════════════════════ -->
+<script>
+/* ────────────────────────────────────────
+   외부 링크 / 다운로드 자원
+   ──────────────────────────────────────── */
+// 학부모 가이드 PDF — 시기별 직접 다운로드 (다운로드 시 한글 파일명)
+const PDF_GUIDES = {
+  '5-7': { href: 'pdfs/parent_guide_5-7.pdf', download: '씽커블_5-7세_부모가이드.pdf' },
+  '1-3': { href: 'pdfs/parent_guide_1-3.pdf', download: '씽커블_1-3학년_부모가이드.pdf' },
+  '4-6': { href: 'pdfs/parent_guide_4-6.pdf', download: '씽커블_4-6학년_부모가이드.pdf' }
+};
+
+// 상담 신청 — 외부 구글 폼 새 탭 이동 (12 조합 모두 동일 URL)
+const CONSULT_FORM_URL = 'https://forms.gle/qgrBbRmctubvr6Bp7';
+
+/* ────────────────────────────────────────
+   기질 메타 (사분면 라벨 등)
+   ──────────────────────────────────────── */
+const TEMPERAMENT_META = {
+  tooMuchTalker: { ko: '투머치토커', label: 'OUT · SELF', desc: '표현형 · 자기주도' },
+  proSotongRo:   { ko: '프로소통러', label: 'OUT · WITH', desc: '표현형 · 관계의존' },
+  powerDeokhu:   { ko: '파워덕후형', label: 'IN · SELF',  desc: '흡수형 · 자기주도' },
+  powerJ:        { ko: '파워J',      label: 'IN · WITH',  desc: '흡수형 · 관계의존' }
+};
+
+/* ────────────────────────────────────────
+   query string 파싱
+   /result.html?key=tooMuchTalker_5-7&x=20&y=-15
+   ──────────────────────────────────────── */
+function getParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    key: params.get('key'),
+    x: params.get('x') !== null ? parseFloat(params.get('x')) : null,
+    y: params.get('y') !== null ? parseFloat(params.get('y')) : null
+  };
+}
+
+/* ────────────────────────────────────────
+   기질 결정 (사양서 3.2)
+   ──────────────────────────────────────── */
+function determineTemperament(expressionRatio, autonomyRatio) {
+  if (expressionRatio < 50) {
+    return autonomyRatio >= 50 ? 'powerDeokhu' : 'powerJ';
+  } else {
+    return autonomyRatio >= 50 ? 'tooMuchTalker' : 'proSotongRo';
+  }
+}
+
+/* ────────────────────────────────────────
+   SVG 기질 지도 컴포넌트 (사양서 4.4)
+   x, y: -50 ~ +50
+   좌표 변환:
+     SVG x = 100 + (data_x * 1.4)  → 30 ~ 170
+     SVG y = 100 - (data_y * 1.4)  → 170 ~ 30 (위가 +y)
+   ──────────────────────────────────────── */
+function renderTemperamentMap(x, y, temperament) {
+  const svgX = 100 + (x * 1.4);
+  const svgY = 100 - (y * 1.4);
+
+  const quadrants = {
+    powerJ:        { x: 50,  y: 156, name: '파워J',      hex: temperament === 'powerJ' ? '#143D28' : '#A89F8C' },
+    proSotongRo:   { x: 150, y: 156, name: '프로소통러', hex: temperament === 'proSotongRo' ? '#143D28' : '#A89F8C' },
+    powerDeokhu:   { x: 50,  y: 50,  name: '파워덕후형', hex: temperament === 'powerDeokhu' ? '#143D28' : '#A89F8C' },
+    tooMuchTalker: { x: 150, y: 50,  name: '투머치토커', hex: temperament === 'tooMuchTalker' ? '#143D28' : '#A89F8C' }
+  };
+
+  // 본인 사분면 강조 (배경 영역)
+  const highlights = {
+    powerDeokhu:   'M20,20 L100,20 L100,100 L20,100 Z',
+    tooMuchTalker: 'M100,20 L180,20 L180,100 L100,100 Z',
+    powerJ:        'M20,100 L100,100 L100,180 L20,180 Z',
+    proSotongRo:   'M100,100 L180,100 L180,180 L100,180 Z'
+  };
+
+  return `
+    <svg class="map-svg" viewBox="0 0 200 200" role="img" aria-label="기질 지도">
+      <defs>
+        <pattern id="dotGrid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r="0.6" fill="#E5E0D4"/>
+        </pattern>
+      </defs>
+
+      <!-- 배경 -->
+      <rect x="20" y="20" width="160" height="160" rx="14" fill="#FAF7F0" stroke="#E5E0D4" stroke-width="1.2"/>
+      <rect x="20" y="20" width="160" height="160" rx="14" fill="url(#dotGrid)" opacity="0.4"/>
+
+      <!-- 본인 사분면 강조 -->
+      <path d="${highlights[temperament]}" fill="#EAF5F0" opacity="0.5"/>
+
+      <!-- 십자 축 -->
+      <line x1="100" y1="20" x2="100" y2="180" stroke="#C7C0AE" stroke-width="0.8" stroke-dasharray="2,2"/>
+      <line x1="20" y1="100" x2="180" y2="100" stroke="#C7C0AE" stroke-width="0.8" stroke-dasharray="2,2"/>
+
+      <!-- 사분면 라벨 -->
+      ${Object.values(quadrants).map(q => `
+        <text x="${q.x}" y="${q.y}" text-anchor="middle" font-size="10"
+              font-weight="${q.hex === '#143D28' ? '800' : '500'}" fill="${q.hex}"
+              font-family="Pretendard, sans-serif">${q.name}</text>
+      `).join('')}
+
+      <!-- 축 라벨 -->
+      <text x="100" y="12" text-anchor="middle" font-size="8.5" font-weight="700" fill="#178A6E" letter-spacing="1.5">자기주도</text>
+      <text x="100" y="194" text-anchor="middle" font-size="8.5" font-weight="700" fill="#178A6E" letter-spacing="1.5">관계의존</text>
+      <text x="6" y="103" font-size="8.5" font-weight="700" fill="#178A6E" letter-spacing="1.5">흡수</text>
+      <text x="194" y="103" text-anchor="end" font-size="8.5" font-weight="700" fill="#178A6E" letter-spacing="1.5">표현</text>
+
+      <!-- 우리 아이 위치 점 -->
+      <circle class="map-dot-ring" cx="${svgX}" cy="${svgY}" r="16" fill="#EF8B4E" opacity="0.35"/>
+      <circle class="map-dot" cx="${svgX}" cy="${svgY}" r="7" fill="#EF8B4E" stroke="#fff" stroke-width="2.5"/>
+    </svg>
+  `;
+}
+
+/* ────────────────────────────────────────
+   결과지 렌더링
+   ──────────────────────────────────────── */
+let currentKey = null;
+
+async function init() {
+  const { key, x, y } = getParams();
+
+  // 조합 키 없으면 에러 화면
+  if (!key || !/^[a-zA-Z]+_(5-7|1-3|4-6)$/.test(key)) {
+    document.getElementById('errorView').classList.remove('hidden');
+    return;
+  }
+
+  // 카피 로드
+  let copyData;
+  try {
+    const res = await fetch('data/results.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error('fetch failed');
+    copyData = await res.json();
+  } catch(e) {
+    console.error('카피 데이터 로드 실패', e);
+    document.getElementById('errorView').classList.remove('hidden');
+    return;
+  }
+
+  const copy = copyData[key];
+  if (!copy) {
+    console.error('조합 키 미존재', key);
+    document.getElementById('errorView').classList.remove('hidden');
+    return;
+  }
+
+  currentKey = key;
+  const [temperament, ageStage] = key.split('_');
+  const meta = TEMPERAMENT_META[temperament] || {};
+
+  // 블록 1
+  document.getElementById('resLine1').textContent = copy.block1_topCard.line1;
+  document.getElementById('resLine2').textContent = copy.block1_topCard.line2;
+  document.getElementById('resTypeLabel').textContent = meta.label || '—';
+  document.getElementById('resAgeBadge').textContent = ageStage;
+
+  // 블록 2
+  const scenesBox = document.getElementById('resScenes');
+  scenesBox.innerHTML = copy.block2_dailyScenes.map((s, i, arr) => `
+    <div class="flex items-start gap-3 ${i < arr.length - 1 ? 'pb-3.5 border-b border-line' : ''}">
+      <div class="w-6 h-6 rounded-full bg-greenSoft text-green flex items-center justify-center text-[12px] font-extrabold flex-shrink-0 mt-0.5">${i + 1}</div>
+      <p class="text-[14.5px] leading-[1.7] text-ink flex-1">${escapeHtml(s)}</p>
+    </div>
+  `).join('');
+
+  // 블록 3
+  document.getElementById('resFrustration').textContent = copy.block3_frustration;
+
+  // 블록 4 — SVG 지도 + 카피 두 줄
+  // x, y가 query string에 없으면 본인 사분면 중심으로 가짜 좌표
+  const dotX = x !== null ? x : (temperament === 'tooMuchTalker' || temperament === 'proSotongRo' ? 22 : -22);
+  const dotY = y !== null ? y : (temperament === 'tooMuchTalker' || temperament === 'powerDeokhu' ? 22 : -22);
+  document.getElementById('mapContainer').innerHTML = renderTemperamentMap(dotX, dotY, temperament);
+  document.getElementById('resMapLine1').textContent = copy.block4_mapInterpretation.line1;
+  document.getElementById('resMapLine2').textContent = copy.block4_mapInterpretation.line2;
+
+  // 블록 5 — 4가지 모습
+  const behaviorsBox = document.getElementById('resFourBehaviors');
+  behaviorsBox.innerHTML = copy.block5_fourBehaviors.map((b, i) => `
+    <div class="bg-white border border-line rounded-2xl p-5">
+      <div class="flex items-start gap-3">
+        <div class="w-7 h-7 rounded-full bg-darkgreen text-white flex items-center justify-center text-[13px] font-extrabold flex-shrink-0">${i + 1}</div>
+        <div class="flex-1">
+          <p class="text-[15px] leading-[1.7] text-ink font-medium">${escapeHtml(b.behavior)}</p>
+        </div>
+      </div>
+      <div class="mt-4 pl-10 space-y-2.5">
+        <div class="flex items-start gap-2">
+          <span class="text-[11px] font-bold text-green tracking-wider bg-greenSoft px-2 py-0.5 rounded-full flex-shrink-0 mt-0.5">의미</span>
+          <p class="text-[14px] leading-[1.7] text-ink/85 flex-1">${escapeHtml(b.meaning)}</p>
+        </div>
+        <div class="flex items-start gap-2">
+          <span class="text-[11px] font-bold text-orange tracking-wider bg-orangeSoft px-2 py-0.5 rounded-full flex-shrink-0 mt-0.5">대응</span>
+          <p class="text-[14px] leading-[1.7] text-ink font-medium flex-1">${escapeHtml(b.response)}</p>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // 블록 6 — 안 통하는 말 / 통하는 말
+  const pairsBox = document.getElementById('resWordPairs');
+  pairsBox.innerHTML = copy.block6_wordPairs.map(p => `
+    <div class="grid grid-cols-[1fr_auto_1fr] items-stretch gap-2.5">
+      <div class="bg-white border border-line rounded-xl p-3.5">
+        <div class="text-[10px] font-bold text-muted/70 tracking-wider uppercase">참아야 할 말</div>
+        <p class="mt-1 text-[14px] leading-[1.5] text-muted line-through decoration-1 decoration-muted/40">${escapeHtml(p.avoid)}</p>
+      </div>
+      <div class="flex items-center text-orange text-xl font-bold">→</div>
+      <div class="bg-darkgreen text-white rounded-xl p-3.5 relative overflow-hidden">
+        <div class="absolute -top-4 -right-4 w-16 h-16 bg-orange/15 rounded-full blur-xl"></div>
+        <div class="relative">
+          <div class="text-[10px] font-bold text-orange tracking-wider uppercase">바꿀 말</div>
+          <p class="mt-1 text-[14px] leading-[1.5] text-white font-bold">${escapeHtml(p.replace)}</p>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // 블록 7
+  document.getElementById('resAgeEssence').textContent = copy.block7_parentRole.ageEssence;
+  document.getElementById('resParentRole').textContent = copy.block7_parentRole.role;
+
+  // 블록 8
+  document.getElementById('resWeeklyPractice').textContent = copy.block8_weeklyPractice;
+
+  // 블록 9 — CTA 카피
+  document.getElementById('resPdfHeadline').textContent = copy.block9_cta.pdf.headline;
+  document.getElementById('resPdfSub').textContent = copy.block9_cta.pdf.sub;
+  document.getElementById('resConsultHeadline').textContent = copy.block9_cta.consultation.headline;
+  document.getElementById('resConsultSub').textContent = copy.block9_cta.consultation.sub;
+
+  // 블록 9 — PDF 다운로드 링크 (시기별 파일·한글 파일명 주입)
+  const pdfInfo = PDF_GUIDES[ageStage];
+  if (pdfInfo) {
+    const a = document.getElementById('resPdfDownload');
+    a.setAttribute('href', pdfInfo.href);
+    a.setAttribute('download', pdfInfo.download);
+  }
+
+  // 본문 노출
+  document.getElementById('resultView').classList.remove('hidden');
+
+  // GA4 — 결과지 진입 이벤트
+  track('result_view', { combination_key: key, temperament, age_stage: ageStage });
+
+  // reveal 애니메이션
+  setTimeout(() => {
+    document.querySelectorAll('#resultView .reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), i * 100);
+    });
+  }, 60);
+
+  // 스크롤 추적 (블록 5, 블록 8 진입)
+  setupScrollTracking();
+}
+
+/* HTML escape */
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[m]));
+}
+
+/* ────────────────────────────────────────
+   스크롤 추적 (GA4 이벤트)
+   ──────────────────────────────────────── */
+function setupScrollTracking() {
+  const observed = { block5: false, block8: false };
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        if (id === 'resFourBehaviors' && !observed.block5) {
+          observed.block5 = true;
+          track('scroll_block5_behaviors', { combination_key: currentKey });
+        }
+        if (id === 'block8' && !observed.block8) {
+          observed.block8 = true;
+          track('scroll_block8_practice', { combination_key: currentKey });
+        }
+      }
+    });
+  }, { threshold: 0.5 });
+
+  const b5 = document.getElementById('resFourBehaviors');
+  const b8 = document.getElementById('block8');
+  if (b5) io.observe(b5);
+  if (b8) io.observe(b8);
+}
+
+/* ────────────────────────────────────────
+   카드 공유 (html2canvas)
+   ──────────────────────────────────────── */
+async function saveCardImage() {
+  const card = document.getElementById('result-card');
+  try {
+    const canvas = await html2canvas(card, { backgroundColor: null, scale: 2, useCORS: true });
+    const link = document.createElement('a');
+    link.download = `thnkable-${currentKey || 'result'}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    track('share_image_save', { combination_key: currentKey });
+    showToast('이미지를 저장했습니다');
+  } catch(e) { console.error(e); showToast('저장에 실패했습니다'); }
+}
+
+async function shareCard() {
+  const card = document.getElementById('result-card');
+  try {
+    const canvas = await html2canvas(card, { backgroundColor: null, scale: 2, useCORS: true });
+    canvas.toBlob(async (blob) => {
+      const file = new File([blob], 'thnkable.png', { type: 'image/png' });
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: '씽커블 학습 기질 진단 결과',
+          text: '우리 아이의 학습 기질 결과지',
+          files: [file]
+        });
+        track('share_native', { combination_key: currentKey });
+      } else {
+        // URL 복사 폴백
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          showToast('링크가 복사되었습니다');
+          track('share_link_copy', { combination_key: currentKey });
+        } catch {
+          saveCardImage();
+        }
+      }
+    });
+  } catch(e) { console.error(e); saveCardImage(); }
+}
+
+/* ────────────────────────────────────────
+   모달 (Stibee/Tally 임베드)
+   ──────────────────────────────────────── */
+/* PDF — 시기별 직접 다운로드 (GA4 클릭 트래킹) */
+function trackPdfClick() {
+  const [, ageStage] = (currentKey || '').split('_');
+  track('cta_pdf_download', { combination_key: currentKey, age_stage: ageStage });
+}
+
+/* 상담 — 외부 구글 폼으로 새 탭 이동 (GA4 클릭 트래킹만 처리) */
+function trackConsultClick() {
+  track('cta_consult_click', { combination_key: currentKey, form_url: CONSULT_FORM_URL });
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+// ESC 키로 모달 닫기
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-backdrop.active').forEach(m => m.classList.remove('active'));
+  }
+});
+
+/* ────────────────────────────────────────
+   토스트
+   ──────────────────────────────────────── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* 시작 */
+init();
+</script>
+
+</body>
+</html>

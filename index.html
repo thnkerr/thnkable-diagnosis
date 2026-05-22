@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>씽커블 | 우리 아이의 학습 기질</title>
+<meta name="description" content="부모가 들어갈 문을 찾는 20가지 질문 — 씽커블 학습 기질 진단" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: '#1a1a1a',
+        muted: '#6B6B6B',
+        cream: '#F5F1E8',
+        creamSoft: '#FAF7F0',
+        line: '#E5E0D4',
+        darkgreen: '#143D28',
+        green: '#178A6E',
+        greenSoft: '#EAF5F0',
+        orange: '#EF8B4E',
+        orangeSoft: '#FDEBDD'
+      },
+      fontFamily: {
+        pretendard: ['"Pretendard Variable"', 'Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', '"Helvetica Neue"', '"Apple SD Gothic Neo"', '"Noto Sans KR"', 'sans-serif']
+      }
+    }
+  }
+};
+</script>
+
+<style>
+  html, body {
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    color: #1a1a1a;
+    background: #F5F1E8;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+
+  /* ────────────────────────────────────────
+     STEP TRANSITION
+     ──────────────────────────────────────── */
+  .step { display: none; }
+  .step.active { display: block; animation: fadeIn 0.5s ease-out both; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-out { animation: fadeOut 0.28s ease-in forwards; }
+  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-6px); } }
+  .q-anim { animation: qFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  @keyframes qFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ────────────────────────────────────────
+     SECTION LABEL (브랜드소개서 'TARGET AUDIENCE' 스타일)
+     ──────────────────────────────────────── */
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+    color: #178A6E;
+    text-transform: uppercase;
+  }
+  .section-label.on-dark { color: #EF8B4E; }
+
+  /* ────────────────────────────────────────
+     PROGRESS BAR
+     ──────────────────────────────────────── */
+  .progress-track { height: 4px; background: #E5E0D4; border-radius: 999px; overflow: hidden; }
+  .progress-fill { height: 100%; background: #178A6E; border-radius: 999px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+
+  /* ────────────────────────────────────────
+     ANSWER BUTTON (흰 pill, 호버 시 그린)
+     ──────────────────────────────────────── */
+  .answer-btn {
+    background: #fff;
+    border: 1.5px solid #E5E0D4;
+    border-radius: 18px;
+    padding: 22px 22px;
+    text-align: left;
+    width: 100%;
+    transition: border-color 0.18s, background 0.18s, transform 0.12s;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .answer-btn:hover { border-color: #143D28; background: #FFFEFA; }
+  .answer-btn:active { transform: scale(0.985); }
+  .answer-btn .letter {
+    flex-shrink: 0;
+    width: 30px; height: 30px;
+    border-radius: 999px;
+    background: #F5F1E8;
+    color: #143D28;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+  }
+  .answer-btn:hover .letter { background: #143D28; color: #fff; }
+  .answer-btn .answer-text {
+    font-size: 16px; line-height: 1.55; color: #1a1a1a; font-weight: 500;
+    padding-top: 4px;
+  }
+  /* 선택 시 강조 — 오렌지 (포인트 컬러) */
+  .answer-btn.is-pressed { background: #143D28; border-color: #143D28; }
+  .answer-btn.is-pressed .letter { background: #EF8B4E; color: #fff; }
+  .answer-btn.is-pressed .answer-text { color: #fff; }
+
+  /* ────────────────────────────────────────
+     BUTTONS
+     ──────────────────────────────────────── */
+  .btn-primary {
+    background: #143D28;
+    color: #fff;
+    border-radius: 999px;
+    padding: 16px 28px;
+    font-weight: 700;
+    font-size: 16px;
+    transition: all 0.18s;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-primary:hover { background: #0E2C1D; transform: translateY(-1px); box-shadow: 0 10px 24px rgba(20,61,40,0.25); }
+  .btn-primary:disabled { background: #C7C0AE; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .btn-secondary {
+    background: transparent;
+    color: #143D28;
+    border: 1.5px solid #143D28;
+    border-radius: 999px;
+    padding: 16px 28px;
+    font-weight: 700;
+    font-size: 16px;
+    transition: all 0.18s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-secondary:hover { background: #143D28; color: #fff; }
+
+  .btn-orange {
+    background: #EF8B4E;
+    color: #fff;
+    border-radius: 999px;
+    padding: 16px 28px;
+    font-weight: 700;
+    font-size: 16px;
+    transition: all 0.18s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-orange:hover { background: #E37835; transform: translateY(-1px); box-shadow: 0 10px 24px rgba(239,139,78,0.3); }
+
+  /* ────────────────────────────────────────
+     AGE OPTION (흰 pill)
+     ──────────────────────────────────────── */
+  .age-option {
+    background: #fff;
+    border: 1.5px solid #E5E0D4;
+    border-radius: 18px;
+    padding: 22px 24px;
+    cursor: pointer;
+    transition: all 0.18s;
+    display: flex; align-items: center; gap: 16px;
+    width: 100%;
+    text-align: left;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .age-option:hover { border-color: #143D28; }
+  .age-option.selected { border-color: #143D28; background: #143D28; }
+  .age-option.selected * { color: #fff !important; }
+  .age-option .radio {
+    width: 22px; height: 22px; border-radius: 999px;
+    border: 2px solid #C7C0AE; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.18s;
+  }
+  .age-option.selected .radio { border-color: #EF8B4E; background: transparent; }
+  .age-option.selected .radio::after {
+    content: ''; width: 10px; height: 10px; border-radius: 999px; background: #EF8B4E;
+  }
+
+  /* ────────────────────────────────────────
+     RESULT CARD (다크그린 + 오렌지 포인트)
+     공유용 1:1 비율 가능
+     ──────────────────────────────────────── */
+  .result-card {
+    background: #143D28;
+    color: #fff;
+    border-radius: 28px;
+    padding: 40px 28px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  /* 오렌지 닷 패턴 */
+  .result-card::before {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(239,139,78,0.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .result-card::after {
+    content: '';
+    position: absolute; bottom: -80px; left: -50px;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(23,138,110,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ────────────────────────────────────────
+     SCORE BAR
+     ──────────────────────────────────────── */
+  .bar-track { height: 10px; background: #E5E0D4; border-radius: 999px; overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; background: #178A6E; border-radius: 999px; width: 0%; transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); }
+
+  /* ────────────────────────────────────────
+     MODAL
+     ──────────────────────────────────────── */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(20,61,40,0.6);
+    z-index: 50; display: none;
+    align-items: flex-end; justify-content: center;
+    padding: 16px;
+  }
+  .modal-backdrop.active { display: flex; animation: fadeIn 0.25s ease-out both; }
+  .modal-content {
+    background: #fff; border-radius: 28px;
+    width: 100%; max-width: 480px;
+    padding: 32px 26px 32px;
+    max-height: 90vh; overflow-y: auto;
+    animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @media (min-width: 640px) {
+    .modal-backdrop { align-items: center; }
+  }
+
+  /* ────────────────────────────────────────
+     FORM
+     ──────────────────────────────────────── */
+  .form-input {
+    width: 100%;
+    background: #FAF7F0;
+    border: 1.5px solid #E5E0D4;
+    border-radius: 14px;
+    padding: 15px 17px;
+    font-size: 16px;
+    color: #1a1a1a;
+    transition: all 0.18s;
+    font-family: inherit;
+  }
+  .form-input:focus {
+    outline: none; border-color: #143D28; background: #fff;
+    box-shadow: 0 0 0 3px rgba(20,61,40,0.08);
+  }
+  .form-label { display: block; font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
+
+  .checkbox-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    cursor: pointer;
+    font-size: 14px; color: #5a5a5a; line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .checkbox-row input[type=checkbox] { display: none; }
+  .checkbox-row .box {
+    width: 20px; height: 20px; border: 1.5px solid #C7C0AE; border-radius: 5px;
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+    background: #fff;
+    transition: all 0.15s;
+  }
+  .checkbox-row input[type=checkbox]:checked + .box {
+    background: #143D28; border-color: #143D28;
+  }
+  .checkbox-row input[type=checkbox]:checked + .box::after {
+    content: ''; width: 6px; height: 10px;
+    border: solid #fff; border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg); margin-top: -2px;
+  }
+
+  /* ────────────────────────────────────────
+     QUOTE MARK (브랜드 소개서의 큰 따옴표)
+     ──────────────────────────────────────── */
+  .quote-mark {
+    color: #EF8B4E;
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 0.6;
+    font-family: Georgia, 'Times New Roman', serif;
+    display: inline-block;
+    vertical-align: -6px;
+  }
+
+  /* ────────────────────────────────────────
+     INFO ROW (인트로 박스 안)
+     ──────────────────────────────────────── */
+  .info-row {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-row .dot {
+    width: 8px; height: 8px; border-radius: 999px;
+    background: #EF8B4E; margin-top: 9px; flex-shrink: 0;
+  }
+
+  /* ────────────────────────────────────────
+     BADGE
+     ──────────────────────────────────────── */
+  .badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ────────────────────────────────────────
+     TOAST
+     ──────────────────────────────────────── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #143D28; color: #fff;
+    padding: 14px 22px; border-radius: 999px;
+    font-size: 14px; font-weight: 600;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+    z-index: 100;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    max-width: calc(100vw - 48px);
+    text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ────────────────────────────────────────
+     SCROLL REVEAL
+     ──────────────────────────────────────── */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ────────────────────────────────────────
+     SMALL MOBILE
+     ──────────────────────────────────────── */
+  @media (max-width: 380px) {
+    .answer-btn { padding: 18px 18px; }
+    .answer-btn .answer-text { font-size: 15px; }
+    .result-card { padding: 32px 22px 30px; }
+  }
+
+  /* 작은 점선 (Target 박스 같은 데코) */
+  .dashed-ring {
+    border: 1.5px dashed #EF8B4E;
+    border-radius: 999px;
+    padding: 8px;
+    display: inline-block;
+  }
+</style>
+</head>
+
+<body class="font-pretendard">
+
+<!-- ════════════════════════════════════════════════════════
+     상단 로고바
+     ════════════════════════════════════════════════════════ -->
+<header class="px-6 pt-5 pb-2 max-w-[520px] mx-auto">
+  <div class="flex items-center justify-between">
+    <img src="assets/logo.png" alt="Thnkable" class="h-6 w-auto" />
+    <span class="text-[11px] tracking-[0.2em] font-bold text-darkgreen/60 uppercase">Parent Diagnosis</span>
+  </div>
+</header>
+
+<main class="max-w-[520px] mx-auto px-6 pb-16">
+
+<!-- ════════════════════════════════════════════════════════
+     STEP 0: 인트로
+     ════════════════════════════════════════════════════════ -->
+<section id="step0" class="step active pt-6">
+  <div class="section-label">CHILD DIAGNOSIS</div>
+
+  <h1 class="text-[30px] sm:text-[34px] font-extrabold leading-[1.2] mt-3 text-darkgreen">
+    우리 아이의<br/>
+    <span class="text-green">학습 기질</span>
+  </h1>
+
+  <p class="mt-4 text-[15px] text-muted leading-[1.7]">
+    부모가 들어갈 문을 찾는<br/>
+    <span class="font-bold text-ink">20가지 질문</span>
+  </p>
+
+  <!-- 다크그린 인포 카드 (브랜드소개서 VISION & CONTACT 스타일) -->
+  <div class="mt-7 bg-darkgreen text-white rounded-[28px] p-7 relative overflow-hidden">
+    <div class="absolute -top-12 -right-12 w-40 h-40 bg-orange/15 rounded-full blur-2xl"></div>
+    <div class="absolute -bottom-16 -left-10 w-44 h-44 bg-green/15 rounded-full blur-2xl"></div>
+
+    <div class="relative">
+      <div class="section-label on-dark">HOW IT WORKS</div>
+      <h2 class="text-[22px] font-extrabold mt-2 leading-tight">
+        <span class="quote-mark">"</span>
+        기질은 단정하는 라벨이 아니라,<br/>
+        부모의 <span class="text-orange">첫 반응</span>을 고르는 지도입니다.
+        <span class="quote-mark">"</span>
+      </h2>
+
+      <div class="mt-6">
+        <div class="info-row">
+          <div class="dot"></div>
+          <div>
+            <div class="font-bold text-[15px]">약 3분 소요</div>
+            <div class="text-[13px] text-white/70 mt-0.5">한 화면 한 문항, 자동 진행</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="dot"></div>
+          <div>
+            <div class="font-bold text-[15px]">최근 1~2개월 기준</div>
+            <div class="text-[13px] text-white/70 mt-0.5">평소 더 자주 보이는 쪽으로</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="dot"></div>
+          <div>
+            <div class="font-bold text-[15px]">결과는 즉시 확인</div>
+            <div class="text-[13px] text-white/70 mt-0.5">13페이지 PDF 가이드는 이메일로</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-7">
+    <button type="button" class="btn-primary w-full" onclick="goStep(1)">시작하기 →</button>
+  </div>
+
+  <p class="mt-7 text-center text-[12px] text-muted/80 leading-relaxed">
+    먼저 영어 | 씽커블<br/>
+    아이들이 영어로부터 자유로워지는 방법
+  </p>
+</section>
+
+<!-- ════════════════════════════════════════════════════════
+     STEP 1: 연령 선택
+     ════════════════════════════════════════════════════════ -->
+<section id="step1" class="step pt-8">
+  <div class="section-label">STEP 01 · AGE</div>
+  <h2 class="text-[26px] font-extrabold mt-2 leading-[1.3] text-darkgreen">
+    우리 아이의 <span class="text-green">나이</span>를<br/>알려주세요
+  </h2>
+  <p class="text-[14px] text-muted mt-2 leading-relaxed">연령에 따라 결과 해석이 달라집니다.</p>
+
+  <div class="mt-8 space-y-3" id="ageOptions">
+    <button type="button" class="age-option" data-age="5-7세">
+      <span class="radio"></span>
+      <div>
+        <div class="font-extrabold text-[17px] text-ink">5~7세</div>
+        <div class="text-[13px] text-muted mt-0.5">유치</div>
+      </div>
+    </button>
+    <button type="button" class="age-option" data-age="1-3학년">
+      <span class="radio"></span>
+      <div>
+        <div class="font-extrabold text-[17px] text-ink">1~3학년</div>
+        <div class="text-[13px] text-muted mt-0.5">초등 저학년</div>
+      </div>
+    </button>
+    <button type="button" class="age-option" data-age="4-6학년">
+      <span class="radio"></span>
+      <div>
+        <div class="font-extrabold text-[17px] text-ink">4~6학년</div>
+        <div class="text-[13px] text-muted mt-0.5">초등 고학년</div>
+      </div>
+    </button>
+  </div>
+
+  <div class="mt-10 flex gap-3">
+    <button type="button" class="btn-secondary flex-1" onclick="goStep(0)">← 이전</button>
+    <button type="button" class="btn-primary flex-1" id="step1NextBtn" disabled onclick="afterAge()">다음 →</button>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════
+     STEP 2: 문항
+     ════════════════════════════════════════════════════════ -->
+<section id="step2" class="step pt-6">
+  <div class="flex items-center justify-between mb-3">
+    <div class="section-label">STEP 02 · QUESTION</div>
+    <div class="text-[13px] font-bold text-darkgreen"><span id="qCurrent">1</span> <span class="text-muted/70">/ 20</span></div>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="qProgress" style="width: 5%;"></div></div>
+
+  <p id="qIntroNote" class="mt-6 text-[13px] text-ink bg-white border border-line px-4 py-3.5 rounded-2xl leading-relaxed">
+    최근 1~2개월 아이의 모습을 떠올려, <span class="font-bold text-darkgreen">더 가까운 쪽</span>을 골라주세요. 둘 다 해당하면 더 자주 보이는 쪽으로요.
+  </p>
+
+  <div id="question" class="mt-7"></div>
+
+  <div class="mt-7">
+    <button type="button" class="text-[14px] text-muted font-semibold py-2" onclick="prevQ()" id="qPrevBtn">← 이전</button>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════
+     STEP 3: 결과 (8블록 구성)
+     ════════════════════════════════════════════════════════ -->
+<section id="step3" class="step pt-6">
+  <div class="section-label reveal">RESULT</div>
+  <h2 class="text-[26px] font-extrabold mt-2 leading-[1.3] text-darkgreen reveal">
+    아이의 학습 기질<br/>
+    <span class="text-green">결과가 나왔습니다.</span>
+  </h2>
+
+  <!-- ▣ 블록 1. 상단 카드 (공유용) -->
+  <div class="mt-7 reveal">
+    <div id="result-card" class="result-card">
+      <img src="assets/logo-white.png" alt="Thnkable" class="absolute top-6 right-6 h-5 w-auto opacity-90" />
+
+      <div class="relative">
+        <div class="section-label on-dark">OUR CHILD</div>
+        <div class="text-[13px] text-white/80 mt-4">우리 아이는</div>
+        <div class="text-[38px] font-extrabold mt-1 leading-none" id="resType">—</div>
+
+        <div class="mt-4 inline-flex items-center gap-1.5 bg-orange/15 text-orange px-3 py-1 rounded-full">
+          <span class="w-1.5 h-1.5 rounded-full bg-orange"></span>
+          <span class="text-[11px] font-bold tracking-wider uppercase" id="resAxisLabel">— · —</span>
+        </div>
+
+        <p class="mt-6 text-[15px] leading-[1.75] text-white/90" id="resHeadline">—</p>
+
+        <div class="mt-8 pt-5 border-t border-white/15 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <img src="assets/logo-white.png" alt="Thnkable" class="h-4 w-auto" />
+            <span class="text-[11px] text-white/50">| 학습 기질 진단</span>
+          </div>
+          <span class="text-[10px] text-white/40 tracking-wider" id="resAgeBadge">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-2 mt-3">
+      <button type="button" class="flex-1 text-[13px] font-bold py-3 bg-white border border-line rounded-full text-ink hover:bg-cream active:scale-[0.98] transition" onclick="saveCardImage()">🖼  이미지 저장</button>
+      <button type="button" class="flex-1 text-[13px] font-bold py-3 bg-white border border-line rounded-full text-ink hover:bg-cream active:scale-[0.98] transition" onclick="shareCard()">🔗  공유</button>
+    </div>
+  </div>
+
+  <!-- ▣ 블록 2. 보통 이런 모습 -->
+  <div class="mt-12 reveal">
+    <div class="section-label">DAILY SCENES</div>
+    <h3 class="text-[20px] font-extrabold mt-1.5 text-darkgreen">보통 이런 모습입니다</h3>
+
+    <div class="mt-4 bg-white border border-line rounded-2xl p-5 space-y-3.5" id="resScenes">
+      <!-- JS로 3개 채워짐 -->
+    </div>
+  </div>
+
+  <!-- ▣ 블록 3. 그동안의 답답함 호명 -->
+  <div class="mt-10 reveal">
+    <div class="section-label" style="color:#EF8B4E;">SIGNAL, NOT FAULT</div>
+    <h3 class="text-[20px] font-extrabold mt-1.5 text-darkgreen">그동안의 답답함</h3>
+
+    <div class="mt-4 bg-orangeSoft/60 border border-orange/30 rounded-2xl p-5 relative">
+      <span class="quote-mark absolute top-3 left-4">"</span>
+      <p class="text-[16px] leading-[1.75] text-ink font-medium pl-7 pr-3" id="resRelief">—</p>
+      <span class="quote-mark absolute bottom-2 right-4">"</span>
+    </div>
+  </div>
+
+  <!-- ▣ 블록 4. 기질 지도 위치 해석 (일상 + 영어 학습 상황 두 줄) -->
+  <div class="mt-10 reveal">
+    <div class="section-label">MAP POSITION</div>
+    <h3 class="text-[20px] font-extrabold mt-1.5 text-darkgreen">기질 지도 위에서는</h3>
+
+    <div class="mt-4 bg-white border border-line rounded-2xl p-5">
+      <div class="flex items-start gap-3">
+        <span class="text-[11px] font-bold text-green bg-greenSoft px-2.5 py-1 rounded-full flex-shrink-0 mt-0.5 tracking-wider">일상</span>
+        <p class="text-[15px] leading-[1.75] text-ink flex-1" id="resMapPosition">—</p>
+      </div>
+      <div class="mt-3.5 pt-3.5 border-t border-line flex items-start gap-3">
+        <span class="text-[11px] font-bold text-orange bg-orangeSoft px-2.5 py-1 rounded-full flex-shrink-0 mt-0.5 tracking-wider">영어</span>
+        <p class="text-[15px] leading-[1.75] text-ink flex-1" id="resMapLearning">—</p>
+      </div>
+    </div>
+
+    <!-- 축 점수 막대 -->
+    <div class="mt-3 bg-white border border-line rounded-2xl p-5 space-y-6">
+      <div>
+        <div class="flex items-center justify-between text-[13px] mb-2">
+          <span class="font-extrabold text-darkgreen">표현형 <span class="text-orange" id="resOutPct">0</span>%</span>
+          <span class="text-muted">흡수형 <span id="resInPct">0</span>%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" id="bar1" style="width:0%;"></div></div>
+      </div>
+      <div>
+        <div class="flex items-center justify-between text-[13px] mb-2">
+          <span class="font-extrabold text-darkgreen">자기주도 <span class="text-orange" id="resSelfPct">0</span>%</span>
+          <span class="text-muted">관계의존 <span id="resWithPct">0</span>%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" id="bar2" style="width:0%;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ▣ 블록 5. 이 시기에는 -->
+  <div class="mt-10 reveal">
+    <div class="section-label">THIS AGE</div>
+    <h3 class="text-[20px] font-extrabold mt-1.5 text-darkgreen"><span id="resAgeLabel">—</span> 시기에는</h3>
+
+    <div class="mt-4 bg-white border border-line rounded-2xl p-5">
+      <p class="text-[14px] leading-[1.75] text-muted" id="resAgeEssence">—</p>
+      <div class="mt-3 pt-3 border-t border-line">
+        <p class="text-[15px] leading-[1.8] text-ink font-medium" id="resAgeCore">—</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ▣ 블록 6. 부모님의 자리 (다크그린 강조) -->
+  <div class="mt-10 reveal">
+    <div class="section-label">YOUR ROLE</div>
+    <h3 class="text-[20px] font-extrabold mt-1.5 text-darkgreen">부모님의 자리</h3>
+
+    <div class="mt-4 bg-darkgreen text-white rounded-2xl p-6 relative overflow-hidden">
+      <div class="absolute -top-10 -right-10 w-32 h-32 bg-orange/15 rounded-full blur-2xl"></div>
+      <div class="relative">
+        <p class="text-[16px] leading-[1.8] text-white font-medium" id="resParentRole">—</p>
+        <div class="mt-4 pt-4 border-t border-white/15">
+          <div class="flex items-start gap-3">
+            <span class="text-orange font-bold text-[13px] tracking-wider flex-shrink-0 mt-0.5">TODAY</span>
+            <p class="text-[15px] leading-[1.75] text-white/95" id="resParentAction">—</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ▣ 블록 7. 오늘 저녁에 이 한 마디 -->
+  <div class="mt-10 reveal">
+    <div class="section-label" style="color:#EF8B4E;">TONIGHT</div>
+    <h3 class="text-[20px] font-extrabold mt-1.5 text-darkgreen">오늘 저녁에 이 한 마디만</h3>
+
+    <div class="mt-4 space-y-3">
+      <!-- 참아야 할 말 -->
+      <div class="bg-white border border-line rounded-2xl p-5 relative">
+        <div class="flex items-start gap-3">
+          <div class="w-7 h-7 rounded-full bg-line/60 flex items-center justify-center flex-shrink-0">
+            <span class="text-muted text-lg leading-none">×</span>
+          </div>
+          <div class="flex-1">
+            <div class="text-[11px] font-bold text-muted/80 tracking-wider uppercase">참아야 할 말</div>
+            <p class="mt-1 text-[16px] leading-[1.5] text-muted line-through decoration-1 decoration-muted/40" id="resOldPhrase">—</p>
+          </div>
+        </div>
+      </div>
+      <!-- 화살표 -->
+      <div class="flex justify-center -my-1">
+        <div class="text-orange text-2xl">↓</div>
+      </div>
+      <!-- 바꿀 말 -->
+      <div class="bg-darkgreen text-white rounded-2xl p-5 relative overflow-hidden">
+        <div class="absolute -top-8 -right-8 w-24 h-24 bg-orange/20 rounded-full blur-2xl"></div>
+        <div class="relative flex items-start gap-3">
+          <div class="w-7 h-7 rounded-full bg-orange flex items-center justify-center flex-shrink-0">
+            <span class="text-white font-bold text-sm">✓</span>
+          </div>
+          <div class="flex-1">
+            <div class="text-[11px] font-bold text-orange tracking-wider uppercase">바꿀 말</div>
+            <p class="mt-1 text-[17px] leading-[1.5] text-white font-bold" id="resNewPhrase">—</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ▣ 마무리 인용구 -->
+  <div class="mt-12 reveal">
+    <div class="bg-cream border border-line rounded-2xl p-6 text-center">
+      <p class="text-[15px] leading-[1.85] text-darkgreen">
+        <span class="quote-mark">"</span>
+        기질은 단정하는 라벨이 아니라,<br/>
+        부모의 <span class="text-orange font-bold">첫 반응</span>을 고르는 지도입니다.
+        <span class="quote-mark">"</span>
+      </p>
+      <p class="mt-4 text-[12px] text-muted leading-relaxed">
+        아이는 시기와 환경에 따라 달라집니다.<br/>
+        한 학기에 한 번씩 다시 진단해보세요.
+      </p>
+    </div>
+  </div>
+
+  <!-- ▣ 블록 8. PDF 다리 + CTA -->
+  <div class="mt-10 space-y-4 reveal">
+    <!-- PDF CTA — 블록 8 카피 노출 -->
+    <div class="bg-white border-2 border-darkgreen rounded-2xl p-5">
+      <div class="flex items-start gap-3.5">
+        <div class="w-11 h-11 rounded-xl bg-greenSoft flex items-center justify-center text-xl flex-shrink-0">📄</div>
+        <div class="flex-1">
+          <div class="font-extrabold text-darkgreen text-[16px] leading-tight">13페이지 부모 코칭 가이드</div>
+          <div class="text-[13px] text-muted mt-1 leading-[1.7]" id="resPdfBridge">—</div>
+        </div>
+      </div>
+      <button type="button" class="mt-4 w-full btn-primary" onclick="openPdfModal()">이메일로 받기 →</button>
+    </div>
+
+    <!-- 상담 CTA -->
+    <div class="bg-darkgreen text-white rounded-2xl p-5 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-orange/15 rounded-full blur-2xl"></div>
+      <div class="relative flex items-start gap-3.5">
+        <div class="w-11 h-11 rounded-xl bg-orange/20 flex items-center justify-center text-xl flex-shrink-0">💬</div>
+        <div class="flex-1">
+          <div class="font-extrabold text-white text-[16px] leading-tight">우리 아이 맞춤 상담</div>
+          <div class="text-[13px] text-white/70 mt-1 leading-relaxed">30분 1:1 · 결과지 해석 + 학습 방향 안내</div>
+        </div>
+      </div>
+      <button type="button" class="mt-4 w-full btn-orange relative" onclick="openConsultModal()">상담 신청 →</button>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <div class="mt-14 text-center pb-4">
+    <div class="flex justify-center">
+      <img src="assets/logo.png" alt="Thnkable" class="h-5 w-auto" />
+    </div>
+    <p class="text-[11px] text-muted/80 mt-3 tracking-[0.18em] uppercase">먼저 영어 | 씽커블</p>
+    <button type="button" class="mt-5 text-[13px] font-semibold text-darkgreen underline underline-offset-4" onclick="resetAll()">처음부터 다시하기</button>
+  </div>
+</section>
+
+</main>
+
+<!-- ════════════════════════════════════════════════════════
+     STEP 4: PDF 모달
+     ════════════════════════════════════════════════════════ -->
+<div id="pdfModal" class="modal-backdrop" onclick="if(event.target===this)closeModal('pdfModal')">
+  <div class="modal-content">
+    <div class="section-label">PDF GUIDE</div>
+    <h3 class="text-[24px] font-extrabold mt-2 text-darkgreen">이메일로 받기</h3>
+    <p class="mt-3 text-[14px] text-muted leading-relaxed">
+      입력하신 이메일로 <span class="font-bold text-ink">13페이지 PDF 가이드</span>가 자동 발송됩니다.
+    </p>
+
+    <div class="mt-6">
+      <label class="form-label">이메일</label>
+      <input id="pdfEmail" class="form-input" type="email" placeholder="example@email.com" />
+    </div>
+
+    <div class="mt-5">
+      <label class="checkbox-row">
+        <input type="checkbox" id="pdfMarketing" />
+        <span class="box"></span>
+        <span>마케팅 정보 수신에 동의합니다 <span class="text-muted/70">(선택)</span></span>
+      </label>
+      <p class="text-[12px] text-muted/80 mt-2 pl-7">* 동의 안 해도 PDF는 발송됩니다</p>
+    </div>
+
+    <div class="mt-7 flex gap-3">
+      <button type="button" class="btn-secondary flex-1" onclick="closeModal('pdfModal')">취소</button>
+      <button type="button" class="btn-primary flex-1" onclick="handlePdfSubmit()">PDF 받기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     STEP 5: 상담 모달
+     ════════════════════════════════════════════════════════ -->
+<div id="consultModal" class="modal-backdrop" onclick="if(event.target===this)closeModal('consultModal')">
+  <div class="modal-content">
+    <div class="section-label on-dark" style="color:#EF8B4E;">CONSULT 1:1</div>
+    <h3 class="text-[24px] font-extrabold mt-2 text-darkgreen">우리 아이 맞춤 상담</h3>
+    <p class="mt-3 text-[14px] text-muted leading-relaxed">
+      <span class="font-bold text-ink">30분 1:1 상담</span>으로 결과지를 함께 해석하고 우리 아이에게 맞는 학습 방향을 안내해드립니다.
+    </p>
+
+    <div class="mt-6 space-y-4">
+      <div>
+        <label class="form-label">이름</label>
+        <input id="consultName" class="form-input" type="text" placeholder="홍길동" />
+      </div>
+      <div>
+        <label class="form-label">핸드폰번호</label>
+        <input id="consultPhone" class="form-input" type="tel" placeholder="010-0000-0000" maxlength="13" />
+      </div>
+      <div>
+        <label class="form-label">통화 가능 시간대</label>
+        <select id="consultTime" class="form-input">
+          <option value="">선택해주세요</option>
+          <option value="평일 오전">평일 오전 (09~12시)</option>
+          <option value="평일 오후">평일 오후 (12~18시)</option>
+          <option value="평일 저녁">평일 저녁 (18~21시)</option>
+          <option value="주말">주말</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mt-5">
+      <label class="checkbox-row">
+        <input type="checkbox" id="consultPrivacy" onchange="updateConsultBtn()" />
+        <span class="box"></span>
+        <span>개인정보 수집·이용에 동의합니다 <span class="text-orange font-bold">(필수)</span> · <a class="underline text-darkgreen" onclick="event.preventDefault(); showPrivacy();" href="#">약관 보기</a></span>
+      </label>
+    </div>
+
+    <div class="mt-7 flex gap-3">
+      <button type="button" class="btn-secondary flex-1" onclick="closeModal('consultModal')">취소</button>
+      <button type="button" id="consultSubmitBtn" class="btn-orange flex-1" disabled style="opacity:0.5;cursor:not-allowed;" onclick="handleConsultSubmit()">상담 신청</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     데이터
+     ════════════════════════════════════════════════════════ -->
+<script>
+const QUESTIONS = [
+  // 축1(1~10): A=Out(표현), B=In(흡수)
+  { id: 1,  axis: 1, scenario: "새 영상이나 책을 보여주면",        a: "보는 중에도 말이나 반응이 계속 나옵니다", b: "일단 끝까지 보고 나중에 반응이 나옵니다" },
+  { id: 2,  axis: 1, scenario: "모르는 단어가 나오면",              a: "그 자리에서 '이게 뭐야?'라고 묻습니다", b: "그냥 넘어가거나 나중에 떠올려 묻습니다" },
+  { id: 3,  axis: 1, scenario: "좋아하는 걸 발견하면",              a: "바로 가족에게 보여주거나 자랑합니다", b: "혼자 한참 즐기다가 한참 후 말합니다" },
+  { id: 4,  axis: 1, scenario: "학교나 유치원에서 있었던 일을",     a: "묻기 전에 먼저 와서 이야기합니다", b: "물어봐야 짧게 답합니다" },
+  { id: 5,  axis: 1, scenario: "새 단어나 표현을 들으면",           a: "따라 말하거나 흥얼거립니다", b: "듣고만 있다가 며칠 뒤 갑자기 씁니다" },
+  { id: 6,  axis: 1, scenario: "화나거나 슬플 때",                  a: "큰 소리나 말로 표현합니다", b: "조용해지거나 몸으로 표현합니다" },
+  { id: 7,  axis: 1, scenario: "책이나 영상이 끝난 직후",           a: "줄거리나 인상 깊은 부분을 길게 말합니다", b: "한 장면이나 한 단어만 짧게 말합니다" },
+  { id: 8,  axis: 1, scenario: "새 친구나 어른을 만나면",           a: "먼저 말 걸고 자기 이야기를 합니다", b: "한참 지켜보다가 천천히 다가갑니다" },
+  { id: 9,  axis: 1, scenario: "모르는 게 있어도",                  a: "모른다고 바로 말합니다", b: "모르는 티를 안 내고 넘어가려 합니다" },
+  { id: 10, axis: 1, scenario: "칭찬을 받았을 때",                  a: "신나서 더 자랑하거나 또 하려 합니다", b: "쑥스러워하거나 조용히 좋아합니다" },
+  // 축2(11~20): A=Self(자기주도), B=With(관계의존)
+  { id: 11, axis: 2, scenario: "영상이나 책을 고를 때",             a: "자기가 보고 싶은 걸 끝까지 고집합니다", b: "부모나 선생님이 추천하는 걸 따릅니다" },
+  { id: 12, axis: 2, scenario: "학습을 시작할 때",                  a: "옆에 부모가 없어도 시작합니다", b: "옆에 누가 있어야 안정적으로 시작합니다" },
+  { id: 13, axis: 2, scenario: "좋아하는 주제를 만나면",            a: "그것만 깊이 파고들어 한참 봅니다", b: "좋아하지만 곧 다른 것도 보고 싶어합니다" },
+  { id: 14, axis: 2, scenario: "정해진 순서가 바뀌면",              a: "자기 방식대로 가버립니다", b: "불안해하거나 멈춥니다" },
+  { id: 15, axis: 2, scenario: "모르는 게 생기면",                  a: "일단 자기 식으로 시도하거나 추측합니다", b: "바로 부모나 선생님에게 묻습니다" },
+  { id: 16, axis: 2, scenario: "부모가 칭찬을 안 해도",             a: "자기가 만족하면 계속합니다", b: "반응이 없으면 금방 멈춥니다" },
+  { id: 17, axis: 2, scenario: "룰이나 시간을 정해주면",            a: "어기거나 자기 시간대로 갑니다", b: "안에서 안정감을 느끼고 잘 지킵니다" },
+  { id: 18, axis: 2, scenario: "새 활동을 권할 때",                 a: "'내가 하고 싶을 때'라며 미룹니다", b: "누구랑 같이 하는지부터 묻습니다" },
+  { id: 19, axis: 2, scenario: "친구가 다른 걸 할 때",              a: "자기 하던 걸 계속합니다", b: "친구 따라가고 싶어합니다" },
+  { id: 20, axis: 2, scenario: "학습이 끝났을 때",                  a: "자기가 만족했는지 스스로 판단합니다", b: "부모나 선생님의 반응으로 잘했는지 판단합니다" }
+];
+
+const TYPES = {
+  '투머치토커':  { axis1: 'Out', axis2: 'Self', label: 'OUT · SELF',  oneliner: "아는 것은 입 밖으로 꺼낼 때 살아납니다. 자기 페이스대로 표현하며 배우는 아이입니다." },
+  '프로소통러':  { axis1: 'Out', axis2: 'With', label: 'OUT · WITH',  oneliner: "함께 반응을 주고받을 때 가장 몰입합니다. 관계 안에서 말이 살아나는 아이입니다." },
+  '파워덕후형':  { axis1: 'In',  axis2: 'Self', label: 'IN · SELF',   oneliner: "꽂힌 주제는 깊이 파고듭니다. 자기 관심 안에서 조용히 쌓이는 아이입니다." },
+  '파워J':       { axis1: 'In',  axis2: 'With', label: 'IN · WITH',   oneliner: "예측 가능한 순서와 규칙 안에서 안정감을 찾습니다. 차근차근 받아들이는 아이입니다." }
+};
+
+/* ────────────────────────────────────────
+   12조합 × 8블록 카피 (연령 × 기질)
+   각 블록:
+   - headline:     상단 카드 한 줄 정의 (블록 1)
+   - scenes:       보통 이런 모습 3줄 (블록 2)
+   - relief:       그동안의 답답함 호명 (블록 3)
+   - mapPosition:  기질 지도 위치 — 일상 표현 (블록 4-1)
+   - mapLearning:  기질 지도 위치 — 영어 학습 상황 (블록 4-2)
+   - ageEssence:   이 시기 본질 한 줄 (블록 5 상단)
+   - ageCore:      이 시기 × 이 기질 핵심 한 줄 (블록 5 하단)
+   - parentRole:   부모 역할 한 줄 (블록 6 상단)
+   - parentAction: 부모 행동 지침 한 줄 (블록 6 하단)
+   - oldPhrase:    참아야 할 말 (블록 7)
+   - newPhrase:    바꿀 말 (블록 7)
+   - pdfBridge:    pdf 다리 CTA 한 줄 (블록 8)
+   ──────────────────────────────────────── */
+const COPY = {
+  '5-7세': {
+    '투머치토커': {
+      headline: "보는 중에도 입이 먼저 나갑니다. 알고 싶은 게 있으면 바로 묻고, 정답보다 자기 말로 설명하는 시간이 더 깁니다.",
+      scenes: [
+        "캐릭터 영상이 시작되자마자 '이게 뭐야? 왜 저래?' 멈출 줄 모릅니다.",
+        "그림책을 같이 보면 끝까지 듣지 않고 자기가 먼저 결말을 말합니다.",
+        "어린이집에서 있었던 일을 묻기 전에, 신발 벗으면서부터 풀어놓습니다."
+      ],
+      relief: "지금까지 \"왜 끝까지 안 듣고 자꾸 끼어들까\" 답답하셨다면, 그건 산만함이 아니라 이 결의 신호입니다.",
+      mapPosition: "이 결의 아이는 머릿속에 들어온 걸 바로 꺼내야 자리가 잡히고, 자기 페이스가 분명한 편입니다.",
+      mapLearning: "캐릭터 영상을 같이 봐도 끝까지 듣기보다 중간중간 자기 말을 끼워야 더 잘 들어옵니다.",
+      ageEssence: "5-7세는 영어 앞에서 편안해지는 첫 경험을 만드는 시기입니다.",
+      ageCore: "이 결의 아이에게는 \"정답인지 확인하는 시간\"보다 \"따라 말해도 되는 자리\"가 더 큽니다.",
+      parentRole: "가르치는 부모보다 아이가 꺼내는 말을 같이 따라 해주는 부모가 필요합니다.",
+      parentAction: "영상에서 들린 한 단어를 아이가 따라 하면, 함께 한 번 더 소리 내주세요.",
+      oldPhrase: "끝까지 들어봐",
+      newPhrase: "그 단어 다시 한번 해볼래?",
+      pdfBridge: "이 결의 아이가 함께 보는 시간에 가장 잘 트이는 한 마디들이 가이드 안에 정리되어 있습니다."
+    },
+    '파워덕후형': {
+      headline: "좋아하는 한 가지에는 깊이 들어가지만, 새로운 것 앞에서는 시간이 필요합니다. 자기 안에서 정리되어야 다음 걸음이 나옵니다.",
+      scenes: [
+        "좋아하는 공룡 책 한 권을 다섯 번 읽지만, 새 책은 손도 안 댑니다.",
+        "관심 있는 영상은 같은 장면을 또 봅니다.",
+        "시킨 것 앞에서는 30분이 30시간 같습니다."
+      ],
+      relief: "지금까지 \"왜 시킨 것만 안 할까\" 답답하셨다면, 그건 고집이 아니라 이 결의 신호입니다.",
+      mapPosition: "이 결의 아이는 좋아하는 것 안에서 안전함을 느낀 다음에야 새 것을 받고, 자기 페이스가 분명합니다.",
+      mapLearning: "좋아하는 캐릭터 영상은 같은 장면을 또 보지만, 새 그림책은 옆에 놓아두어도 한참 뒤에야 손이 갑니다.",
+      ageEssence: "5-7세는 영어 앞에서 편안해지는 첫 경험을 만드는 시기입니다.",
+      ageCore: "이 결의 아이에게는 \"낯선 새것을 시키는 시간\"보다 \"좋아하는 것 옆에서 영어가 들리는 자리\"가 더 큽니다.",
+      parentRole: "가르치는 부모보다 좋아하는 것 옆에 비슷한 새것 하나를 조용히 놓아두는 부모가 필요합니다.",
+      parentAction: "설명하지 않고, 같이 앉아주세요.",
+      oldPhrase: "왜 그것만 보니",
+      newPhrase: "거기서 뭐가 제일 좋아?",
+      pdfBridge: "좋아하는 것에서 영어로 자연스럽게 흘러가게 만드는 부모의 옆자리법이 가이드 안에 정리되어 있습니다."
+    },
+    '파워J': {
+      headline: "순서가 보일 때 마음이 열리고, 옆에 누가 있을 때 첫 한 걸음이 나옵니다. 익숙해질 시간이 필요한 아이입니다.",
+      scenes: [
+        "그림책을 읽을 때 페이지 넘기는 순서가 바뀌면 처음부터 다시 하자고 합니다.",
+        "어린이집에서 새 친구를 만나면 한참 지켜본 다음 천천히 다가갑니다.",
+        "영어 영상을 보여줄 때 옆에 부모가 없으면 시작 버튼을 안 누릅니다."
+      ],
+      relief: "지금까지 \"왜 매번 처음부터 망설일까\" 답답하셨다면, 그건 소심함이 아니라 이 결의 신호입니다.",
+      mapPosition: "이 결의 아이는 다음에 뭐가 올지 보이고 옆에 누가 있을 때 안에서 마음이 열립니다.",
+      mapLearning: "캐릭터 영상도 어제 본 그 영상을 오늘 같은 자리에서 다시 볼 때 비로소 영어 소리가 들립니다.",
+      ageEssence: "5-7세는 영어 앞에서 편안해지는 첫 경험을 만드는 시기입니다.",
+      ageCore: "이 결의 아이에게는 \"새로운 자극을 자주 바꾸는 시간\"보다 \"같은 시간, 같은 자리, 같은 순서로 반복되는 자리\"가 더 큽니다.",
+      parentRole: "다양한 걸 보여주는 부모보다 어제 봤던 영어 그림책을 오늘도 같은 자리에서 같이 봐주는 부모가 필요합니다.",
+      parentAction: "새로운 건 한 번에 한 가지씩, 옆에 앉아서 같이 시작해주세요.",
+      oldPhrase: "빨리 해봐",
+      newPhrase: "엄마 옆에 있을 거야. 같이 시작하자.",
+      pdfBridge: "시작이 어려운 아이를 옆자리와 순서로 학습에 끌어들이는 부모의 작은 의식이 가이드 안에 정리되어 있습니다."
+    },
+    '프로소통러': {
+      headline: "혼자보다 둘이 있을 때 말이 살아납니다. 부모의 반응 한 번이 아이의 다음 한 마디를 만듭니다.",
+      scenes: [
+        "그림책 한 권을 혼자서는 잘 안 보지만, 부모 옆에서는 30분도 끄떡없이 봅니다.",
+        "캐릭터 영상을 보다가 자꾸 뒤를 돌아보고 부모 반응을 확인합니다.",
+        "역할놀이를 시작하면 부모가 호응해줘야 끝까지 끌고 갑니다."
+      ],
+      relief: "지금까지 \"왜 혼자서는 5분도 못 앉아 있을까\" 답답하셨다면, 그건 의존이 아니라 이 결의 신호입니다.",
+      mapPosition: "이 결의 아이는 옆에 있는 사람의 반응이 닿을 때 말이 살아나고, 혼자가 되면 금방 멈춥니다.",
+      mapLearning: "캐릭터 영상도 혼자 보면 20분이 5분 같지만, 부모가 같이 보면 30분도 끄떡없이 봅니다.",
+      ageEssence: "5-7세는 영어 앞에서 편안해지는 첫 경험을 만드는 시기입니다.",
+      ageCore: "이 결의 아이에게는 \"혼자 영상 보는 20분\"보다 \"부모와 함께 보는 5분\"이 더 큽니다.",
+      parentRole: "가르치는 부모보다 짧게라도 옆에 앉아 \"오, 그거 새 단어네\" 한 번 반응해주는 부모가 필요합니다.",
+      parentAction: "하루 5분, 같은 자리에서 같이 봐주세요.",
+      oldPhrase: "혼자 한번 해봐",
+      newPhrase: "엄마도 같이 볼게, 시작해.",
+      pdfBridge: "함께일 때 가장 잘 트이는 아이의 5분을 만드는 부모의 청중법이 가이드 안에 정리되어 있습니다."
+    }
+  },
+  '1-3학년': {
+    '투머치토커': {
+      headline: "배운 걸 자기 말로 풀어내야 진짜 아는 게 됩니다. 듣기보다 말이 빠르고, 자기 식대로 가는 길이 가장 빠른 길입니다.",
+      scenes: [
+        "받아쓰기를 하면서 옆에 있는 가족에게 단어 뜻을 다 설명합니다.",
+        "짧은 영어책을 읽다가 한 문장 보고 '이건 이거 같아'라며 자기 해석을 먼저 말합니다.",
+        "학교에서 배운 걸 집에 오자마자 30분 동안 풀어놓고서야 책가방을 풉니다."
+      ],
+      relief: "지금까지 \"왜 차분히 못 앉아 있을까\" 답답하셨다면, 그건 집중력 부족이 아니라 이 결의 신호입니다.",
+      mapPosition: "이 결의 아이는 말로 꺼내는 순간 머릿속이 정리되고, 자기 식대로 가는 길에서 편안함을 느낍니다.",
+      mapLearning: "짧은 영어책도 조용히 외우기보다 옆에 누가 있어 풀어놓을 때 진짜 자기 것이 됩니다.",
+      ageEssence: "1-3학년은 학습 습관이 처음 만들어지는 시기입니다.",
+      ageCore: "이 결의 아이에게는 \"조용히 듣는 30분\"보다 \"자기 말로 1분 풀어내는 자리\"가 더 큽니다.",
+      parentRole: "조용히 시키는 부모보다 아이가 막 풀어놓는 말을 끝까지 들어주는 부모가 필요합니다.",
+      parentAction: "키즈 영상이 끝나면 \"뭐가 제일 기억나?\" 한 마디로 1분만 들어주세요.",
+      oldPhrase: "좀 조용히 해볼래",
+      newPhrase: "방금 그거 한 번 더 설명해줄래?",
+      pdfBridge: "말이 많은 아이를 끊지 않고 학습으로 연결하는 부모의 한 마디들이 가이드 안에 정리되어 있습니다."
+    },
+    '파워덕후형': {
+      headline: "한번 빠진 주제는 끝까지 가지만, 다른 걸 권하면 멈춥니다. 새로운 건 자기가 인정한 다음에야 시작됩니다.",
+      scenes: [
+        "짧은 영어책 한 권에 꽂히면 일주일 내내 그 책만 들고 다닙니다.",
+        "학교에서 새로 받은 단어 카드는 책상에 그대로 쌓여 있습니다.",
+        "받아쓰기는 자기가 외운 단어만 또박또박 쓰고, 그 외에는 손이 안 갑니다."
+      ],
+      relief: "지금까지 \"왜 익숙한 것만 붙들고 있을까\" 답답하셨다면, 그건 게으름이 아니라 이 결의 신호입니다.",
+      mapPosition: "이 결의 아이는 자기 주제 안에서는 깊게 가지만, 갑자기 던져진 새 주제 앞에서는 거부부터 시작합니다.",
+      mapLearning: "학교에서 받은 단어 카드는 책상에 쌓아두고, 자기가 좋아하는 짧은 영어책 한 권만 또 펼칩니다.",
+      ageEssence: "1-3학년은 학습 습관이 처음 만들어지는 시기입니다.",
+      ageCore: "이 결의 아이에게는 \"새 주제로 갈아끼우는 시간\"보다 \"지금 좋아하는 주제 옆에 새 주제를 1:1로 합의하는 자리\"가 더 큽니다.",
+      parentRole: "새 책을 들이밀기보다 지금 좋아하는 책 옆에 비슷한 결의 짧은 영어책 한 권을 슬쩍 놓아두는 부모가 필요합니다.",
+      parentAction: "같이 앉아 아이가 먼저 펼칠 때까지 기다려주세요.",
+      oldPhrase: "이제 다른 거 해보자",
+      newPhrase: "이거 다음에 비슷한 걸로 하나 볼래?",
+      pdfBridge: "한 주제에서 다음 주제로 거부 없이 옮겨가게 만드는 부모의 합의법이 가이드 안에 정리되어 있습니다."
+    },
+    '파워J': {
+      headline: "오늘 무엇을 어디까지 어떻게 하는지가 보일 때 시작합니다. 룰이 분명할 때 안에서 자기 페이스가 만들어집니다.",
+      scenes: [
+        "짧은 영어책 한 권을 읽기 전에 '오늘 몇 페이지까지야?'부터 묻습니다.",
+        "학교 받아쓰기 전날엔 단어를 외우기보다 단어 목록을 가지런히 정리합니다.",
+        "키즈 영상을 시작하기 전에 끝나는 시간을 알아야 마음이 놓입니다."
+      ],
+      relief: "지금까지 \"왜 시작 전에 이렇게 시간을 끌까\" 답답하셨다면, 그건 미루는 게 아니라 이 결의 신호입니다.",
+      mapPosition: "이 결의 아이는 시작 전에 그림이 안 그려지면 첫 발이 안 떨어지고, 룰이 분명할 때 마음이 풀립니다.",
+      mapLearning: "짧은 영어책도 '오늘 몇 페이지까지'가 정해져야 펼치고, 그 안에서는 끝까지 갑니다.",
+      ageEssence: "1-3학년은 학습 습관이 처음 만들어지는 시기입니다.",
+      ageCore: "이 결의 아이에게는 \"그냥 시작해보라는 시간\"보다 \"오늘은 어디부터 어디까지, 몇 분 동안인지가 보이는 자리\"가 더 큽니다.",
+      parentRole: "즉흥적으로 권하는 부모보다 \"오늘은 10분, 이 페이지부터 이 페이지까지\"라고 먼저 적어 보여주는 부모가 필요합니다.",
+      parentAction: "끝나는 지점이 보이게 만들어주세요.",
+      oldPhrase: "일단 해봐",
+      newPhrase: "오늘은 10분, 여기까지 같이 가보자.",
+      pdfBridge: "시작이 무거운 아이에게 \"오늘은 어디까지\" 한 줄로 학습을 가볍게 시작시키는 부모의 작은 약속이 가이드 안에 정리되어 있습니다."
+    },
+    '프로소통러': {
+      headline: "부모가 청중이 될 때 학습이 끝까지 갑니다. 끝나고 1분 듣고 반응해주면, 다음에는 혼자 시작합니다.",
+      scenes: [
+        "짧은 영어책을 읽고 나면 '엄마, 이거 들어봐'부터 시작입니다.",
+        "받아쓰기 점수를 받으면 그 자리에서 부모에게 종이를 들고 옵니다.",
+        "키즈 영상을 보면서 자꾸 '엄마, 이거 봤어?'로 부모를 부릅니다."
+      ],
+      relief: "지금까지 \"왜 자꾸 자기 한 거 봐달라고 할까\" 답답하셨다면, 그건 보채는 게 아니라 이 결의 신호입니다.",
+      mapPosition: "이 결의 아이는 부모의 반응이 닿을 때 자기가 잘 하고 있다는 감각을 얻고, 그 감각이 다음 학습을 끌어옵니다.",
+      mapLearning: "받아쓰기 점수도 점수 자체보다 옆에서 한 번 봐주는 한 마디에서 다음 의욕이 만들어집니다.",
+      ageEssence: "1-3학년은 학습 습관이 처음 만들어지는 시기입니다.",
+      ageCore: "이 결의 아이에게는 \"혼자 학습을 끝내라는 시간\"보다 \"끝난 직후 1분 들어주는 자리\"가 더 큽니다.",
+      parentRole: "멀리서만 보는 부모보다 학습이 끝난 직후 \"오늘 뭐가 제일 기억나?\" 한 마디 묻는 부모가 필요합니다.",
+      parentAction: "1분만 청중이 되어주세요.",
+      oldPhrase: "끝까지 혼자 해",
+      newPhrase: "끝나면 엄마한테 한 가지만 들려줘.",
+      pdfBridge: "청중 한 번에 다음 한 시간을 만드는 부모의 1분 반응법이 가이드 안에 정리되어 있습니다."
+    }
+  },
+  '4-6학년': {
+    '투머치토커': {
+      headline: "자기 의견이 분명하고, 한번 말이 시작되면 끝까지 가야 합니다. 양보다 근거를 붙일 때 깊이가 생깁니다.",
+      scenes: [
+        "영어 숙제를 하다가 옆에 있는 가족에게 '이 문제 답이 왜 이거인지 알아?'부터 설명합니다.",
+        "유튜브 영상 한 편 보고 나면 '엄마, 이건 이래서 그런 거야'가 10분 이어집니다.",
+        "학원 숙제는 자기가 맞다고 생각하는 방식으로 풀고, 다른 방식을 보여주면 표정이 굳습니다."
+      ],
+      relief: "지금까지 \"왜 자기 식대로만 하려고 할까\" 답답하셨다면, 그건 고집이 아니라 이 결의 신호입니다.",
+      mapPosition: "이 결의 아이는 자기 입으로 풀어놓을 때 공부에 손이 가고, 다른 방식을 강요받으면 표정이 굳는 편입니다.",
+      mapLearning: "학원 숙제도 답을 외우기보다 \"왜 이거야\"를 자기 입으로 말할 때 머릿속에 박힙니다.",
+      ageEssence: "4-6학년은 내용을 자기 말로 설명하고 질문으로 확장하는 시기입니다.",
+      ageCore: "이 결의 아이에게는 \"정답을 외우는 시간\"보다 \"왜 그렇게 생각하는지 근거를 붙이는 자리\"가 더 큽니다.",
+      parentRole: "정답을 알려주는 부모보다 아이의 설명에 \"왜 그렇게 생각해?\" 한 번 더 묻는 부모가 필요합니다.",
+      parentAction: "유튜브로 같이 영어 영상을 본 뒤, 아이의 설명 옆에 \"왜 그렇게 생각했어?\" 한 마디만 얹어주세요.",
+      oldPhrase: "그건 틀렸어",
+      newPhrase: "왜 그렇게 생각했어?",
+      pdfBridge: "의견 강한 아이의 표현을 깊이로 바꿔주는 부모의 질문법이 가이드 안에 정리되어 있습니다."
+    },
+    '파워덕후형': {
+      headline: "자기가 정한 주제에서는 어른보다 깊이 들어갑니다. 범위만 정해주면 안은 알아서 갑니다.",
+      scenes: [
+        "좋아하는 게임이나 만화 관련 유튜브는 영어 영상도 끝까지 봅니다.",
+        "학원 숙제는 자기 관심 주제와 연결될 때만 손이 빠르게 갑니다.",
+        "시험 범위는 자기가 흥미 느낀 부분만 깊게 파고, 나머지는 어물쩍 넘어갑니다."
+      ],
+      relief: "지금까지 \"왜 자기 좋아하는 것만 깊이 파고 다른 건 무시할까\" 답답하셨다면, 그건 편식이 아니라 이 결의 신호입니다.",
+      mapPosition: "이 결의 아이는 자기 안에서 \"할 만하다\"가 정해진 다음에야 손이 가고, 방식을 정해주면 오히려 굳는 편입니다.",
+      mapLearning: "학원 숙제도 정해진 풀이를 따르라면 멍하다가, 자기 흥미와 연결되면 30분도 끄떡없이 갑니다.",
+      ageEssence: "4-6학년은 내용을 자기 말로 설명하고 질문으로 확장하는 시기입니다.",
+      ageCore: "이 결의 아이에게는 \"정해진 풀이를 따르라는 시간\"보다 \"범위만 정해주고 안에서 자기 길로 가게 두는 자리\"가 더 큽니다.",
+      parentRole: "방식까지 정해주는 부모보다 \"오늘 유튜브 한 편, 끝나고 가장 기억나는 거 세 가지\"처럼 범위만 짧게 정해주는 부모가 필요합니다.",
+      parentAction: "중간에 묻지 말고, 끝났을 때 한 번 같이 봐주세요.",
+      oldPhrase: "이렇게 해야 맞아",
+      newPhrase: "오늘은 여기까지만, 안은 네가 정해도 돼.",
+      pdfBridge: "범위 한 줄로 깊이 학습을 끌어내는 부모의 짧은 약속법이 가이드 안에 정리되어 있습니다."
+    },
+    '파워J': {
+      headline: "한꺼번에 던지면 멈추지만, 어디까지 어떻게인지 보이면 끝까지 갑니다. 한 번에 다 하려고 하지 않을 때 가장 잘 됩니다.",
+      scenes: [
+        "학원 숙제를 받으면 '오늘 어디까지 해? 내일 어디까지?'부터 묻고, 답이 정해지지 않으면 펜을 안 듭니다.",
+        "영어 시험 범위가 통째로 주어지면 어디부터 손대야 할지 한참 멍합니다.",
+        "태블릿으로 긴 유튜브 영상을 보여주면 중간에 꺼버리고, 짧은 영상은 끝까지 봅니다."
+      ],
+      relief: "지금까지 \"왜 막상 시작은 못 할까\" 답답하셨다면, 그건 게으름이 아니라 이 결의 신호입니다.",
+      mapPosition: "이 결의 아이는 큰 덩어리 앞에서는 굳고, 한 장씩 끊어 보일 때 첫 발이 떨어지는 편입니다.",
+      mapLearning: "영어 시험 범위도 통째로 펼치면 멍하지만, \"오늘은 여기까지\"를 정해주면 그 안에서는 끝까지 갑니다.",
+      ageEssence: "4-6학년은 내용을 자기 말로 설명하고 질문으로 확장하는 시기입니다.",
+      ageCore: "이 결의 아이에게는 \"오늘 안에 다 끝내라는 시간\"보다 \"한 번 끝까지 해보고 틀린 것만 다시 보는 자리\"가 더 큽니다.",
+      parentRole: "완성을 재촉하는 부모보다 \"오늘은 여기까지만, 내일 여기서부터\"라고 끊어주는 부모가 필요합니다.",
+      parentAction: "태블릿 유튜브 영상도 한 번에 보이지 말고, 10분씩 끊고 그 사이에 잠깐 이야기 나누는 시간을 만들어주세요.",
+      oldPhrase: "끝까지 해놔",
+      newPhrase: "한 번에 다 하려고 하지 마. 오늘은 여기까지 하자.",
+      pdfBridge: "한 번에 안 끝나는 학습 앞에서 멈추는 아이를 끊어주며 끝까지 끌고 가는 부모의 한 마디들이 가이드 안에 정리되어 있습니다."
+    },
+    '프로소통러': {
+      headline: "부모의 반응 한 번이 다음 학습을 끌어옵니다. 끝나고 한 줄 들려주는 자리가 있으면 혼자 학습도 끝까지 갑니다.",
+      scenes: [
+        "유튜브로 영어 영상을 보면 끝나고 꼭 '엄마, 이거 무슨 말인지 알아?'로 시작합니다.",
+        "학원 숙제를 다 하면 채점 전에 부모에게 한 번 보여줘야 마음이 놓입니다.",
+        "시험 본 날엔 결과보다 옆에서 들어주는 사람이 더 필요합니다."
+      ],
+      relief: "지금까지 \"왜 끝나면 자꾸 옆에 와서 말을 걸까\" 답답하셨다면, 그건 산만함이 아니라 이 결의 신호입니다.",
+      mapPosition: "이 결의 아이는 자기가 한 걸 누군가에게 풀어놓는 순간 학습이 자리 잡고, 듣는 사람이 없으면 금방 시들합니다.",
+      mapLearning: "유튜브 영어 영상을 봐도 끝나고 누군가에게 한 마디 풀어놓을 자리가 있을 때 진짜 자기 것이 됩니다.",
+      ageEssence: "4-6학년은 내용을 자기 말로 설명하고 질문으로 확장하는 시기입니다.",
+      ageCore: "이 결의 아이에게는 \"혼자 정리하라는 시간\"보다 \"끝나고 1분, 부모에게 한 줄 들려주는 자리\"가 더 큽니다.",
+      parentRole: "점수만 묻는 부모보다 영어 영상이 끝난 뒤 \"오늘 본 거 한 줄로 말해줄래?\" 묻는 부모가 필요합니다.",
+      parentAction: "판단하지 말고, 들어주세요.",
+      oldPhrase: "몇 점이야?",
+      newPhrase: "오늘 본 거 한 줄로 말해줄래?",
+      pdfBridge: "한 줄 들려주는 한 번이 다음 학습을 끌어오는 이 결의 아이를 위한 부모의 듣기법이 가이드 안에 정리되어 있습니다."
+    }
+  }
+};
+
+/* ════════════════════════════════════════════════════════
+   STATE
+   ════════════════════════════════════════════════════════ */
+const STATE_KEY = 'thnkable_diag_v2';
+
+function defaultState() {
+  return { step: 0, age: null, answers: {}, qIdx: 0 };
+}
+function loadState() {
+  try {
+    const raw = sessionStorage.getItem(STATE_KEY);
+    if (!raw) return defaultState();
+    const s = JSON.parse(raw);
+    if (typeof s !== 'object' || s === null) return defaultState();
+    if (typeof s.step !== 'number' || s.step < 0 || s.step > 3) return defaultState();
+    if (typeof s.qIdx !== 'number' || s.qIdx < 0 || s.qIdx > 20) return defaultState();
+    if (typeof s.answers !== 'object' || s.answers === null) s.answers = {};
+    return s;
+  } catch(e) { return defaultState(); }
+}
+function saveState() {
+  try { sessionStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+let state = loadState();
+let isAnswering = false;
+
+/* ════════════════════════════════════════════════════════
+   NAVIGATION
+   ════════════════════════════════════════════════════════ */
+function goStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  state.step = n;
+  saveState();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function afterAge() {
+  if (!state.age) return;
+  state.qIdx = 0;
+  saveState();
+  goStep(2);
+  renderQ();
+}
+
+document.querySelectorAll('.age-option').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.age-option').forEach(x => x.classList.remove('selected'));
+    el.classList.add('selected');
+    state.age = el.dataset.age;
+    document.getElementById('step1NextBtn').disabled = false;
+    saveState();
+  });
+});
+
+/* ════════════════════════════════════════════════════════
+   QUESTIONS
+   ════════════════════════════════════════════════════════ */
+function renderQ() {
+  const i = state.qIdx;
+  if (i >= QUESTIONS.length) { showResult(); return; }
+  const q = QUESTIONS[i];
+  document.getElementById('qCurrent').textContent = i + 1;
+  document.getElementById('qProgress').style.width = ((i + 1) / QUESTIONS.length * 100) + '%';
+  document.getElementById('qIntroNote').style.display = i === 0 ? 'block' : 'none';
+  document.getElementById('qPrevBtn').style.visibility = i === 0 ? 'hidden' : 'visible';
+
+  const container = document.getElementById('question');
+  container.innerHTML = `
+    <div class="q-anim">
+      <div class="text-[11px] font-bold text-orange tracking-[0.18em] mb-3">Q${i + 1}</div>
+      <div class="text-[22px] font-extrabold text-darkgreen leading-[1.35] mb-7">${q.scenario}</div>
+      <div class="space-y-3">
+        <button type="button" class="answer-btn" data-choice="a" onclick="answerQ('a')">
+          <span class="letter">A</span>
+          <span class="answer-text">${q.a}</span>
+        </button>
+        <button type="button" class="answer-btn" data-choice="b" onclick="answerQ('b')">
+          <span class="letter">B</span>
+          <span class="answer-text">${q.b}</span>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function answerQ(choice) {
+  if (isAnswering) return;
+  if (state.qIdx >= QUESTIONS.length) return;
+  isAnswering = true;
+
+  const q = QUESTIONS[state.qIdx];
+  state.answers[q.id] = choice;
+  saveState();
+
+  const container = document.getElementById('question');
+  const btns = container.querySelectorAll('.answer-btn');
+  btns.forEach(b => b.disabled = true);
+  const pressed = container.querySelector(`.answer-btn[data-choice="${choice}"]`);
+  if (pressed) pressed.classList.add('is-pressed');
+
+  setTimeout(() => {
+    container.classList.add('fade-out');
+    setTimeout(() => {
+      container.classList.remove('fade-out');
+      state.qIdx++;
+      saveState();
+      if (state.qIdx >= QUESTIONS.length) {
+        isAnswering = false;
+        showResult();
+      } else {
+        renderQ();
+        isAnswering = false;
+      }
+    }, 280);
+  }, 180);
+}
+
+function prevQ() {
+  if (state.qIdx > 0) {
+    state.qIdx--;
+    saveState();
+    renderQ();
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   CALCULATE
+   ════════════════════════════════════════════════════════ */
+function calculateType(answers) {
+  let axis1A = 0, axis2A = 0;
+  for (let i = 1; i <= 10; i++) {
+    if (answers[i] === 'a') axis1A++;
+  }
+  for (let i = 11; i <= 20; i++) {
+    if (answers[i] === 'a') axis2A++;
+  }
+
+  const axis1 = axis1A >= 6 ? 'Out' : 'In';
+  const axis2 = axis2A >= 6 ? 'Self' : 'With';
+
+  let type;
+  if (axis1 === 'Out' && axis2 === 'Self')      type = '투머치토커';
+  else if (axis1 === 'Out' && axis2 === 'With') type = '프로소통러';
+  else if (axis1 === 'In'  && axis2 === 'Self') type = '파워덕후형';
+  else                                           type = '파워J';
+
+  const outPct = Math.round((axis1A / 10) * 100);
+  const selfPct = Math.round((axis2A / 10) * 100);
+
+  return { type, axis1, axis2, outPct, selfPct };
+}
+
+/* ════════════════════════════════════════════════════════
+   RESULT
+   ════════════════════════════════════════════════════════ */
+/* ────────────────────────────────────────
+   진단 완료 → result.html?key=...&x=...&y=... 로 이동
+   사양서 3.2 — 4기질 결정 + 2D 좌표 변환
+   ──────────────────────────────────────── */
+const TYPE_KEY_MAP = {
+  '투머치토커': 'tooMuchTalker',
+  '프로소통러': 'proSotongRo',
+  '파워덕후형': 'powerDeokhu',
+  '파워J':      'powerJ'
+};
+const AGE_KEY_MAP = {
+  '5-7세':   '5-7',
+  '1-3학년': '1-3',
+  '4-6학년': '4-6'
+};
+
+function showResult() {
+  const result = calculateType(state.answers);
+  state.result = result;
+  saveState();
+
+  const temperament = TYPE_KEY_MAP[result.type];
+  const ageStage = AGE_KEY_MAP[state.age];
+  // expressionRatio = outPct, autonomyRatio = selfPct
+  const x = result.outPct - 50;   // -50(흡수) ~ +50(표현)
+  const y = result.selfPct - 50;  // -50(관계) ~ +50(자기주도)
+  const key = `${temperament}_${ageStage}`;
+
+  window.location.href = `result.html?key=${encodeURIComponent(key)}&x=${x}&y=${y}`;
+}
+
+/* ════════════════════════════════════════════════════════
+   CARD SHARE
+   ════════════════════════════════════════════════════════ */
+async function saveCardImage() {
+  const card = document.getElementById('result-card');
+  try {
+    const canvas = await html2canvas(card, { backgroundColor: null, scale: 2, useCORS: true });
+    const link = document.createElement('a');
+    link.download = `thnkable-${state.result?.type || 'result'}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('이미지를 저장했습니다');
+  } catch(e) { console.error(e); showToast('저장에 실패했습니다'); }
+}
+
+async function shareCard() {
+  const card = document.getElementById('result-card');
+  try {
+    const canvas = await html2canvas(card, { backgroundColor: null, scale: 2, useCORS: true });
+    canvas.toBlob(async (blob) => {
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'thnkable.png', { type: 'image/png' })] })) {
+        await navigator.share({
+          title: '씽커블 학습 기질 진단',
+          text: `우리 아이는 ${state.result?.type}!`,
+          files: [new File([blob], 'thnkable.png', { type: 'image/png' })]
+        });
+      } else {
+        saveCardImage();
+      }
+    });
+  } catch(e) { console.error(e); saveCardImage(); }
+}
+
+/* ════════════════════════════════════════════════════════
+   MODAL
+   ════════════════════════════════════════════════════════ */
+function openPdfModal() { document.getElementById('pdfModal').classList.add('active'); }
+function openConsultModal() { document.getElementById('consultModal').classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+function updateConsultBtn() {
+  const checked = document.getElementById('consultPrivacy').checked;
+  const btn = document.getElementById('consultSubmitBtn');
+  btn.disabled = !checked;
+  btn.style.opacity = checked ? '1' : '0.5';
+  btn.style.cursor = checked ? 'pointer' : 'not-allowed';
+}
+
+function showPrivacy() {
+  alert('수집항목: 이름, 핸드폰번호, 통화시간대\n이용목적: 상담 일정 안내 및 진행\n보유기간: 상담 후 6개월');
+}
+
+// 핸드폰 자동 포맷
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'consultPhone') {
+    let v = e.target.value.replace(/[^0-9]/g, '');
+    if (v.length > 3 && v.length <= 7) v = v.slice(0,3) + '-' + v.slice(3);
+    else if (v.length > 7) v = v.slice(0,3) + '-' + v.slice(3,7) + '-' + v.slice(7,11);
+    e.target.value = v;
+  }
+});
+
+/* ════════════════════════════════════════════════════════
+   Google Form 연동
+   ⚠️ Google Form 만든 후 아래 URL과 entry ID 교체 필요
+   ════════════════════════════════════════════════════════ */
+async function submitPdfForm(data) {
+  // data = { email, age, childType, marketingConsent }
+  // ⚠️ TODO: {FORM_ID_1}을 실제 Google Form ID로 교체
+  const formUrl = "https://docs.google.com/forms/d/e/{FORM_ID_1}/formResponse";
+  const formData = new FormData();
+  // ⚠️ TODO: 각 entry.XXXXXXXXX를 실제 Google Form entry ID로 교체
+  formData.append("entry.XXXXXXXXX", data.email);          // 이메일
+  formData.append("entry.XXXXXXXXX", data.age);            // 연령
+  formData.append("entry.XXXXXXXXX", data.childType);      // 아이 유형
+  formData.append("entry.XXXXXXXXX", data.marketingConsent ? "동의" : "미동의");  // 마케팅 동의
+
+  try {
+    await fetch(formUrl, { method: "POST", mode: "no-cors", body: formData });
+    return true;
+  } catch (e) { console.error(e); return false; }
+}
+
+async function submitConsultForm(data) {
+  // data = { name, phone, timeSlot, age, childType }
+  // ⚠️ TODO: {FORM_ID_2}를 실제 Google Form ID로 교체
+  const formUrl = "https://docs.google.com/forms/d/e/{FORM_ID_2}/formResponse";
+  const formData = new FormData();
+  // ⚠️ TODO: 각 entry.XXXXXXXXX를 실제 Google Form entry ID로 교체
+  formData.append("entry.XXXXXXXXX", data.name);           // 이름
+  formData.append("entry.XXXXXXXXX", data.phone);          // 핸드폰번호
+  formData.append("entry.XXXXXXXXX", data.timeSlot);       // 통화 시간대
+  formData.append("entry.XXXXXXXXX", data.age);            // 연령
+  formData.append("entry.XXXXXXXXX", data.childType);      // 아이 유형
+
+  try {
+    await fetch(formUrl, { method: "POST", mode: "no-cors", body: formData });
+    return true;
+  } catch (e) { console.error(e); return false; }
+}
+
+/* ════════════════════════════════════════════════════════
+   FORM HANDLERS
+   ════════════════════════════════════════════════════════ */
+async function handlePdfSubmit() {
+  const email = document.getElementById('pdfEmail').value.trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('이메일 형식을 확인해주세요');
+    return;
+  }
+  const marketing = document.getElementById('pdfMarketing').checked;
+  await submitPdfForm({
+    email,
+    age: state.age,
+    childType: state.result?.type,
+    marketingConsent: marketing
+  });
+  closeModal('pdfModal');
+  showToast('✅ 이메일이 발송되었습니다 (스팸함도 확인해주세요)');
+}
+
+async function handleConsultSubmit() {
+  const name = document.getElementById('consultName').value.trim();
+  const phone = document.getElementById('consultPhone').value.trim();
+  const timeSlot = document.getElementById('consultTime').value;
+  const privacy = document.getElementById('consultPrivacy').checked;
+
+  if (!name) { showToast('이름을 입력해주세요'); return; }
+  if (!/^010-\d{4}-\d{4}$/.test(phone)) { showToast('010-XXXX-XXXX 형식으로 입력해주세요'); return; }
+  if (!timeSlot) { showToast('통화 시간대를 선택해주세요'); return; }
+  if (!privacy) { showToast('개인정보 수집 동의가 필요합니다'); return; }
+
+  await submitConsultForm({
+    name, phone, timeSlot,
+    age: state.age,
+    childType: state.result?.type
+  });
+  closeModal('consultModal');
+  showToast('✅ 신청 완료 · 영업일 1~2일 내 연락드립니다');
+}
+
+/* ════════════════════════════════════════════════════════
+   MISC
+   ════════════════════════════════════════════════════════ */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function resetAll() {
+  sessionStorage.removeItem(STATE_KEY);
+  state = defaultState();
+  document.getElementById('step1NextBtn').disabled = true;
+  document.querySelectorAll('.age-option').forEach(x => x.classList.remove('selected'));
+  goStep(0);
+}
+
+/* ════════════════════════════════════════════════════════
+   RESTORE
+   ════════════════════════════════════════════════════════ */
+(function restore() {
+  if (state.age) {
+    const opt = document.querySelector(`.age-option[data-age="${state.age}"]`);
+    if (opt) opt.classList.add('selected');
+    document.getElementById('step1NextBtn').disabled = false;
+  }
+
+  if (state.step === 2) {
+    goStep(2);
+    renderQ();
+  } else if (state.step === 3) {
+    showResult();
+  } else {
+    goStep(state.step || 0);
+  }
+})();
+</script>
+
+</body>
+</html>
