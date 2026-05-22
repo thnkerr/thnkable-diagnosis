@@ -621,7 +621,15 @@ async function init() {
   if (pdfInfo) {
     const a = document.getElementById('resPdfDownload');
     a.setAttribute('href', pdfInfo.href);
-    a.setAttribute('download', pdfInfo.download);
+    // iOS는 <a download>가 <a target="_blank"> 동작을 막는 경우가 있어 download 제거.
+    // Android·데스크톱은 download 유지 → 클릭 시 자동 다운로드.
+    const ua = navigator.userAgent;
+    const isIOS = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+    if (isIOS) {
+      a.removeAttribute('download');
+    } else {
+      a.setAttribute('download', pdfInfo.download);
+    }
   }
 
   // 본문 노출
@@ -748,41 +756,15 @@ async function shareCard() {
 /* ────────────────────────────────────────
    모달 (Stibee/Tally 임베드)
    ──────────────────────────────────────── */
-/* PDF — 시기별 직접 다운로드
-   모바일(특히 iOS Safari)에서는 <a target="_blank" download> 조합이 자주 무시되어
-   같은 탭에 PDF 뷰어가 열리거나 아예 아무 동작도 안 함.
-   → 모바일에서는 JS로 명시적 window.open 호출해서 새 탭 강제.
-   → 데스크톱은 기본 동작 그대로(download 속성으로 직접 다운로드). */
+/* PDF — 시기별 직접 다운로드 (GA4 클릭 트래킹만)
+   ⚠️ window.open(url, _blank, features) 조합은 iOS Safari에서 팝업 차단을 유발하고
+       그 폴백 a.click()도 제스처 체인을 벗어나 차단되어 결과적으로 "아무 액션 없음"이 됨.
+   → JS 분기 모두 제거하고 <a target="_blank"> 기본 동작에 맡김.
+   → iOS에서 <a download>가 새 탭 동작 자체를 막는 경우가 있어 init()에서 iOS일 때만 download 제거. */
 function handlePdfClick(e) {
-  const a = e.currentTarget;
-  const href = a.getAttribute('href');
-  const filename = a.getAttribute('download') || '';
   const [, ageStage] = (currentKey || '').split('_');
   track('cta_pdf_download', { combination_key: currentKey, age_stage: ageStage });
-
-  if (!href || href === '#') {
-    e.preventDefault();
-    return;
-  }
-
-  const isMobile = /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent);
-  if (isMobile) {
-    e.preventDefault();
-    // 새 창에서 PDF 열기 — 모바일 PDF 뷰어가 자체 다운로드 옵션 제공
-    const popup = window.open(href, '_blank', 'noopener,noreferrer');
-    if (!popup) {
-      // 팝업 차단 폴백 — 임시 a 태그로 다운로드 시도
-      const tmp = document.createElement('a');
-      tmp.href = href;
-      tmp.download = filename;
-      tmp.target = '_blank';
-      tmp.rel = 'noopener';
-      document.body.appendChild(tmp);
-      tmp.click();
-      document.body.removeChild(tmp);
-    }
-  }
-  // 데스크톱은 기본 동작 그대로 (a 태그의 download + target=_blank가 처리)
+  // preventDefault 호출하지 않음 — <a target="_blank"> 가 모든 환경에서 새 탭 처리
 }
 
 /* 상담 — 외부 구글 폼으로 새 탭 이동 (GA4 클릭 트래킹만 처리) */
