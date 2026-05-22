@@ -374,7 +374,7 @@ tailwind.config = {
       <img src="assets/logo.png" alt="Thnkable" class="h-5 w-auto" />
     </div>
     <p class="text-[11px] text-muted/80 mt-3 tracking-[0.18em] uppercase">먼저 영어 | 씽커블</p>
-    <a href="index.html" class="mt-5 inline-block text-[13px] font-semibold text-darkgreen underline underline-offset-4">다시 진단하기</a>
+    <a href="index.html" onclick="restartDiagnosis()" class="mt-5 inline-block text-[13px] font-semibold text-darkgreen underline underline-offset-4">다시 진단하기</a>
   </div>
 </section>
 
@@ -678,16 +678,43 @@ function setupScrollTracking() {
 /* ────────────────────────────────────────
    카드 공유 (html2canvas)
    ──────────────────────────────────────── */
+/* 이미지 저장
+   모바일에서 <a download>는 다운로드 폴더로만 저장되어 갤러리에 안 보임.
+   → 모바일이면 Web Share API로 공유 시트를 띄워 사용자가 "사진에 저장" 선택 가능하게.
+   → 데스크톱은 기존대로 직접 다운로드. */
 async function saveCardImage() {
   const card = document.getElementById('result-card');
   try {
     const canvas = await html2canvas(card, { backgroundColor: null, scale: 2, useCORS: true });
+    const filename = `thnkable-${currentKey || 'result'}.png`;
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+    const file = new File([blob], filename, { type: 'image/png' });
+
+    const isMobile = /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent);
+
+    // 모바일 + Web Share with files 지원 → 공유 시트로 사용자가 "사진에 저장" 선택
+    if (isMobile && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: '씽커블 학습 기질 진단 결과' });
+        track('share_image_save', { combination_key: currentKey, method: 'web_share' });
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return; // 사용자 취소
+        // 그 외 에러는 폴백으로 진행
+      }
+    }
+
+    // 데스크톱 또는 폴백 — 직접 다운로드
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.download = `thnkable-${currentKey || 'result'}.png`;
-    link.href = canvas.toDataURL('image/png');
+    link.download = filename;
+    link.href = url;
+    document.body.appendChild(link);
     link.click();
-    track('share_image_save', { combination_key: currentKey });
-    showToast('이미지를 저장했습니다');
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    track('share_image_save', { combination_key: currentKey, method: 'download' });
+    showToast(isMobile ? '저장 완료 · 다운로드 폴더 확인' : '이미지를 저장했습니다');
   } catch(e) { console.error(e); showToast('저장에 실패했습니다'); }
 }
 
@@ -761,6 +788,17 @@ function handlePdfClick(e) {
 /* 상담 — 외부 구글 폼으로 새 탭 이동 (GA4 클릭 트래킹만 처리) */
 function trackConsultClick() {
   track('cta_consult_click', { combination_key: currentKey, form_url: CONSULT_FORM_URL });
+}
+
+/* 다시 진단하기 — 진단 페이지 도착 시 마지막 답변 상태로 자동 복원되어
+   결과지로 다시 튕기는 문제를 막기 위해 sessionStorage 초기화.
+   localStorage(마지막 결과 백업)는 유지 → 인트로에서 "지난 결과 다시 보기" 박스로 노출. */
+function restartDiagnosis() {
+  try {
+    sessionStorage.removeItem('thnkable_diag_v2');
+  } catch(_) {}
+  track('restart_diagnosis_click', { combination_key: currentKey });
+  // a 태그 기본 동작으로 index.html 이동
 }
 
 function closeModal(id) {
