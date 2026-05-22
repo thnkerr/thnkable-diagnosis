@@ -108,6 +108,8 @@ tailwind.config = {
     background: #EF8B4E; color: #fff; border-radius: 999px;
     padding: 16px 28px; font-weight: 700; font-size: 16px;
     transition: all 0.18s;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    text-align: center;
     -webkit-tap-highlight-color: transparent;
   }
   .btn-orange:hover { background: #E37835; transform: translateY(-1px); box-shadow: 0 10px 24px rgba(239,139,78,0.3); }
@@ -349,7 +351,7 @@ tailwind.config = {
         <div class="w-11 h-11 rounded-xl bg-greenSoft flex items-center justify-center text-xl mb-3">📄</div>
         <div class="font-extrabold text-darkgreen text-[16px] leading-tight" id="resPdfHeadline">—</div>
         <p class="text-[13px] text-muted mt-2 leading-[1.65] flex-1" id="resPdfSub">—</p>
-        <a id="resPdfDownload" href="#" download target="_blank" rel="noopener" class="mt-4 btn-primary w-full" onclick="trackPdfClick()">학부모 가이드 다운받기</a>
+        <a id="resPdfDownload" href="#" download target="_blank" rel="noopener" class="mt-4 btn-primary w-full" onclick="handlePdfClick(event)">학부모 가이드 다운받기</a>
       </div>
 
       <!-- 상담 카드 (단단한 톤) — 외부 구글 폼 새 탭 이동 -->
@@ -719,10 +721,41 @@ async function shareCard() {
 /* ────────────────────────────────────────
    모달 (Stibee/Tally 임베드)
    ──────────────────────────────────────── */
-/* PDF — 시기별 직접 다운로드 (GA4 클릭 트래킹) */
-function trackPdfClick() {
+/* PDF — 시기별 직접 다운로드
+   모바일(특히 iOS Safari)에서는 <a target="_blank" download> 조합이 자주 무시되어
+   같은 탭에 PDF 뷰어가 열리거나 아예 아무 동작도 안 함.
+   → 모바일에서는 JS로 명시적 window.open 호출해서 새 탭 강제.
+   → 데스크톱은 기본 동작 그대로(download 속성으로 직접 다운로드). */
+function handlePdfClick(e) {
+  const a = e.currentTarget;
+  const href = a.getAttribute('href');
+  const filename = a.getAttribute('download') || '';
   const [, ageStage] = (currentKey || '').split('_');
   track('cta_pdf_download', { combination_key: currentKey, age_stage: ageStage });
+
+  if (!href || href === '#') {
+    e.preventDefault();
+    return;
+  }
+
+  const isMobile = /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent);
+  if (isMobile) {
+    e.preventDefault();
+    // 새 창에서 PDF 열기 — 모바일 PDF 뷰어가 자체 다운로드 옵션 제공
+    const popup = window.open(href, '_blank', 'noopener,noreferrer');
+    if (!popup) {
+      // 팝업 차단 폴백 — 임시 a 태그로 다운로드 시도
+      const tmp = document.createElement('a');
+      tmp.href = href;
+      tmp.download = filename;
+      tmp.target = '_blank';
+      tmp.rel = 'noopener';
+      document.body.appendChild(tmp);
+      tmp.click();
+      document.body.removeChild(tmp);
+    }
+  }
+  // 데스크톱은 기본 동작 그대로 (a 태그의 download + target=_blank가 처리)
 }
 
 /* 상담 — 외부 구글 폼으로 새 탭 이동 (GA4 클릭 트래킹만 처리) */
