@@ -431,15 +431,29 @@ tailwind.config = {
           <div class="dot"></div>
           <div>
             <div class="font-bold text-[15px]">결과는 즉시 확인</div>
-            <div class="text-[13px] text-white/70 mt-0.5">13페이지 PDF 가이드는 이메일로</div>
+            <div class="text-[13px] text-white/70 mt-0.5">학부모 가이드 PDF 바로 다운로드</div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- 지난 결과 다시 보기 박스 (sessionStorage에 결과 있을 때만 노출) -->
+  <div id="lastResultBox" class="mt-6 bg-white border-2 border-orange rounded-2xl p-5 hidden">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-full bg-orangeSoft flex items-center justify-center text-orange text-xl flex-shrink-0">📋</div>
+      <div class="flex-1">
+        <div class="font-extrabold text-darkgreen text-[15px] leading-tight">지난 진단 결과가 있어요</div>
+        <div class="text-[13px] text-muted mt-1 leading-[1.6]" id="lastResultMeta">—</div>
+      </div>
+    </div>
+    <a id="lastResultLink" href="#" class="mt-4 btn-orange w-full inline-flex">결과지 다시 보기 →</a>
+  </div>
+
   <div class="mt-7">
-    <button type="button" class="btn-primary w-full" onclick="goStep(1)">시작하기 →</button>
+    <button type="button" class="btn-primary w-full" onclick="goStep(1)">
+      <span id="startBtnText">시작하기 →</span>
+    </button>
   </div>
 
   <p class="mt-7 text-center text-[12px] text-muted/80 leading-relaxed">
@@ -1278,6 +1292,17 @@ function showResult() {
   const y = result.selfPct - 50;  // -50(관계) ~ +50(자기주도)
   const key = `${temperament}_${ageStage}`;
 
+  // 새 탭에서 사이트 재진입해도 결과지로 바로 갈 수 있게 localStorage에 영구 저장
+  // (sessionStorage는 탭별이라 모바일에서 PDF 뷰어로 전환 후 탭이 종료되면 사라짐)
+  try {
+    localStorage.setItem('thnkable_last_result', JSON.stringify({
+      key, x, y,
+      age: state.age,
+      type: result.type,
+      savedAt: Date.now()
+    }));
+  } catch(e) {}
+
   window.location.href = `result.html?key=${encodeURIComponent(key)}&x=${x}&y=${y}`;
 }
 
@@ -1458,6 +1483,30 @@ function resetAll() {
   } else {
     goStep(state.step || 0);
   }
+
+  // step 0(인트로)일 때만 — localStorage에 지난 결과 있으면 "결과지 다시 보기" 박스 노출
+  // (PDF 다운로드 후 탭이 종료되었거나 사용자가 새 탭으로 사이트 재진입한 경우)
+  try {
+    const last = localStorage.getItem('thnkable_last_result');
+    if (!last) return;
+    const info = JSON.parse(last);
+    if (!info || !info.key) return;
+
+    const box = document.getElementById('lastResultBox');
+    const link = document.getElementById('lastResultLink');
+    const meta = document.getElementById('lastResultMeta');
+    const startBtnText = document.getElementById('startBtnText');
+    if (!box || !link) return;
+
+    link.href = `result.html?key=${encodeURIComponent(info.key)}&x=${info.x}&y=${info.y}`;
+    if (meta) {
+      const d = new Date(info.savedAt || Date.now());
+      const dateStr = `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+      meta.textContent = `${dateStr} · ${info.age} · ${info.type}`;
+    }
+    if (startBtnText) startBtnText.textContent = '처음부터 다시 진단 →';
+    box.classList.remove('hidden');
+  } catch(e) {}
 })();
 </script>
 
